@@ -4,7 +4,7 @@ exports.getTickets = async (req, res) => {
     try {
         const rows = await query('SELECT * FROM facts');
 
-        const alarm = [];
+        const alarm = {};
         const serviceTickets = {};
         const branchTicketsArray = [];
         const states = {};
@@ -14,14 +14,31 @@ exports.getTickets = async (req, res) => {
                 const servover = row.servover;
                 const waitover = row.waitover;
                 const rate = row.rating;
+
                 const serviceName = row.servicename;
                 const branchId = row.idbranch;
                 const state = row.state;
 
                 try {
-                    if (servover === "true" || waitover === "true" || rate === 2 || rate === 1) {
-                        alarm.push(row);
+                    if (servover === "true"  ) {
+                        if(!alarm["servover"]){
+                            alarm["servover"] = [];
+                        }
+                        alarm["servover"].push(row);
                     }
+                    if( waitover === "true"){
+                        if(!alarm["waitover"]){
+                            alarm["waitover"] = [];
+                        }
+                        alarm["waitover"].push(row);
+                    }
+                    if(rate*1 == 2 || rate*1 == 1){
+                        if(!alarm["rate"]){
+                            alarm["rate"] = [];
+                        }
+                        alarm["rate"].push(row);
+                    }
+
                     if(!states[state]) {
                         states[state] = [];
                     }

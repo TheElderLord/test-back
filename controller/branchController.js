@@ -1,72 +1,44 @@
 const connection = require('../db/connection');
 
 exports.getBranches = async (req, res) => {
-  try {
-    const branchRows = await query('SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches');
-
-    const branchInfo = {};
+  
+   connection.query('SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches', (err, rows) => {
+    const branches = rows;
     const branchMap = {};
     const rootBranches = [];
-
-    // Use Promise.all to wait for all inner queries to finish
-    await Promise.all(branchRows.map(async (branch) => {
+    
+    // Create a map for quick access using F_ID
+    branches.forEach(branch => {
       branch.children = [];
       branchMap[branch.F_ID] = branch;
-
-      const { F_NAME: branchName, F_ID: branchId, F_PARENT_ID: parent_id } = branch;
-
-      if (!branchInfo[branchName]) {
-        branchInfo[branchName] = [];
-      }
-      if (parent_id === "101") {
+    });
+    
+    // Identify parent branches and add child branches accordingly
+    branches.forEach(branch => {
+      const parentId = branch.F_PARENT_ID;
+      if (parentId === "101") {
         // Root branch
         rootBranches.push(branch);
-      } else if (branchMap[parent_id]) {
+      } else if (branchMap[parentId]) {
         // Child branch
-        branchMap[parent_id].children.push(branch);
-        delete branch.children;
+        branchMap[parentId].children.push(branch);
       }
-      
-     
-
-
-      
-
-
-      const ticketRows = await query('SELECT * FROM facts WHERE idbranch = ?', [branchId]);
-      branchInfo[branchName] = ticketRows;
-    }));
-   
-    const responseArray = Object.keys(branchInfo).map((branchName) => ({
-      branchName,
-      length: branchInfo[branchName].length,
-      branches: branchInfo[branchName],
-    }));
-
-    res.status(200).json({
-      parent: rootBranches,
+    });
+    const data ={
       message: 'Success',
-      size: branchRows.length,
-      data: branchRows,
-      branchInfo: responseArray,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: err.message,
-    });
-  }
-};
+      size: rootBranches.length,
+      rows: rootBranches
+    }
+    
+    res.status(200).json(data);
 
-// Helper function for querying the database with Promises
-function query(sql, values) {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, values, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
   });
+   
+   
+
+  
+
+ 
+
+
 }
