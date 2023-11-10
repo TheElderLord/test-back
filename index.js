@@ -1,5 +1,5 @@
 const express = require('express');
-
+const cors = require('cors');
 
 const ticketRouter = require('./router/ticketRouter');
 const branchRouter = require('./router/branchRouter');
@@ -9,6 +9,7 @@ const serviceRouter = require('./router/serviceRouter');
 const windowRouter = require('./router/windowRouter');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/tickets', ticketRouter);
