@@ -11,6 +11,7 @@ exports.getBranches = async (req, res) => {
     branches.forEach(branch => {
       branch.children = [];
       branchMap[branch.F_ID] = branch;
+      branch.F_NAME = branch.F_NAME.replace("RU=","");
     });
     
     // Identify parent branches and add child branches accordingly
