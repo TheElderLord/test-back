@@ -1,11 +1,11 @@
 const express = require('express');
-const ticketController = require('../controller/ticketController');
+const serviceController = require('../controller/serviceController');
 
 
 const router = express.Router();
 
 router.route('/').get((req, res) => {
-    ticketController.getTickets(req, res);
+    serviceController.getServices(req, res);
 });
 
 module.exports = router;

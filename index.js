@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
+const constants = require('./constants/constant');
 const ticketRouter = require('./router/ticketRouter');
 const branchRouter = require('./router/branchRouter');
 const userRouter = require('./router/userRouter');
@@ -19,9 +20,9 @@ app.use('/api/v1/employees', employeeRouter);
 app.use('/api/v1/services', serviceRouter);
 app.use('/api/v1/windows', windowRouter);
 
+const port = constants.port;
 
-
-app.listen(3000, function () {
+app.listen(port,'0.0.0.0', function () {
     console.log('Example app listening on port 3000!');
 }); 
 

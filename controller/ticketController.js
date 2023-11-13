@@ -20,26 +20,26 @@ exports.getTickets = async (req, res) => {
                 const state = row.state;
 
                 try {
-                    if (servover === "true"  ) {
-                        if(!alarm["servover"]){
+                    if (servover === "true") {
+                        if (!alarm["servover"]) {
                             alarm["servover"] = [];
                         }
                         alarm["servover"].push(row);
                     }
-                    if( waitover === "true"){
-                        if(!alarm["waitover"]){
+                    if (waitover === "true") {
+                        if (!alarm["waitover"]) {
                             alarm["waitover"] = [];
                         }
                         alarm["waitover"].push(row);
                     }
-                    if(rate*1 == 2 || rate*1 == 1){
-                        if(!alarm["rate"]){
+                    if (rate * 1 == 2 || rate * 1 == 1) {
+                        if (!alarm["rate"]) {
                             alarm["rate"] = [];
                         }
                         alarm["rate"].push(row);
                     }
 
-                    if(!states[state]) {
+                    if (!states[state]) {
                         states[state] = [];
                     }
 
@@ -60,43 +60,71 @@ exports.getTickets = async (req, res) => {
             })
         );
 
-        const responseArray = Object.keys(serviceTickets).map((serviceName) => ({
-            servicename: serviceName,
-            length: serviceTickets[serviceName].length,
-            rows: serviceTickets[serviceName],
-        }));
+
+        const serviceJson = {
+            totalLength: Object.values(serviceTickets).reduce((acc, service) => acc + service.length, 0),
+            data: Object.keys(serviceTickets).map((serviceName) => ({
+                servicename: serviceName,
+                length: serviceTickets[serviceName].length,
+                // rows: serviceTickets[serviceName],
+            })),
+        };
+
+
+
+
 
         const branchArray = Object.keys(branchTicketsArray).map(async (branchId) => {
             const branchNameResult = await query('SELECT F_NAME FROM branches WHERE F_ID = ?', [branchId]);
             const branchName = branchNameResult[0].F_NAME;
+            const totalLength = branchTicketsArray.reduce((acc, branch) => acc + branch.length, 0);
             // const branchTickets = branchTicketsArray[branchId].map((ticket) => {
             //     const {  idbranch, servicename, servover, waitover, rating } = ticket;
-                
+
             // });
-              return {
-                branchId: branchId,
-                branchName: branchName,
-                length: branchTicketsArray[branchId].length,
-                rows: branchTicketsArray[branchId],
+            return {
+                totalLength: totalLength,
+                data: {
+                    branchId: branchId,
+                    branchName: branchName,
+                    length: branchTicketsArray[branchId].length,
+                }
+                // rows: branchTicketsArray[branchId],
             };
         });
-        const statesArray = Object.keys(states).map((state) => ({
-            state: state,
-            length: states[state].length,
-            rows: states[state],
-        }));
+
+        const alarmJson = {
+            totalLength: Object.values(alarm).reduce((acc, alarm) => acc + alarm.length, 0),
+            data: Object.keys(alarm).map((alarmName) => ({
+                alarmName: alarmName,
+                length: alarm[alarmName].length,
+                // rows: alarm[alarmName],
+            })),
+
+        }
+
+
+
+        const stateJson = {
+            totalLength: Object.values(states).reduce((acc, state) => acc + state.length, 0),
+            data: Object.keys(states).map((stateName) => ({
+                stateName: stateName,
+                length: states[stateName].length,
+                // rows: states[stateName],
+            })),
+        };
 
 
         const branchTickets = await Promise.all(branchArray);
 
         const data = {
             message: 'Success',
-            length: rows.length,
+            count: rows.length,
             data: {
-                alarm: alarm,
-                serviceTickets: responseArray,
+                alarm: alarmJson,
+                serviceTickets: serviceJson,
                 branchTickets: branchTickets,
-                states: statesArray,
+                states: stateJson,
             },
         };
 

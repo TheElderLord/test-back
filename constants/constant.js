@@ -6,5 +6,6 @@ module.exports = {
     dbuser: process.env.DB_USER,
     dbpassword: process.env.DB_PASSWORD,
     dbname: process.env.DB_NAME,
-    dbport: process.env.DB_PORT
+    dbport: process.env.DB_PORT,
+    port: process.env.PORT,
 }
