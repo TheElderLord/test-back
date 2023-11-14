@@ -6,6 +6,7 @@ exports.getBranches = async (req, res) => {
     const branches = rows;
     const branchMap = {};
     const rootBranches = [];
+    // console.log('branches', branches);
     
     // Create a map for quick access using F_ID
     branches.forEach(branch => {

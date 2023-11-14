@@ -2,10 +2,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-    dbhost: process.env.DB_HOST,
-    dbuser: process.env.DB_USER,
-    dbpassword: process.env.DB_PASSWORD,
-    dbname: process.env.DB_NAME,
-    dbport: process.env.DB_PORT,
+    dbhost: process.env.MYSQL_HOST,
+    dbuser: process.env.MYSQL_USER,
+    dbpassword: process.env.MYSQL_PASS,
+    dbname: process.env.MYSQL_DB,
+    dbport: process.env.MYSQL_PORT,
+
     port: process.env.PORT,
 }

@@ -1,11 +1,12 @@
 
-const dotenv = require('dotenv');
-dotenv.config();
-const host = process.env.MYSQL_HOST;
-const user = process.env.MYSQL_USER;
-const password = process.env.MYSQL_PASS;
-const database = process.env.MYSQL_DB;
-const port = process.env.MYSQL_PORT;
+const constants = require('../constants/constant')
+
+const host = constants.dbhost;
+const user = constants.dbuser;
+const password = constants.dbpassword;
+const database = constants.dbname;
+const port = constants.dbport;
+
 
 
 
