@@ -25,7 +25,7 @@ app.use('/api/v1/roles', roleRouter);
 const port = constants.port;
 
 app.listen(port,'0.0.0.0', function () {
-    console.log('Example app listening on port 3000!');
+    console.log(`Example app listening on port ${port}!`);
 }); 
 
 
