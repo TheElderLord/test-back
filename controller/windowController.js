@@ -31,6 +31,14 @@ exports.getWindowsById = async (req, res) => {
     });
 
     const ticketsToWindows = {};
+    let newtickets = 0;
+    let servTickets = 0;
+    const newSql = `SELECT * FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`;
+    const fetchNew = await query(newSql);
+    newtickets = fetchNew.length;
+    const servSql = `SELECT * FROM facts WHERE state = 'INSERVICE' AND idbranch = ${branchId}`;
+    const fetchServ = await query(servSql);
+    servTickets = fetchServ.length;
 
     for (const row of rows) {
       const active = row.idoperator * 1 == 0 ? false : true;
@@ -63,8 +71,10 @@ exports.getWindowsById = async (req, res) => {
           }
         );
       });
-      console.log(op_name);
+      // console.log(op_name);
       ticketsToWindows[row.winno].name = op_name[0].f_name;
+
+     
       const sql = `SELECT * FROM facts WHERE windownum = ${row.winno} and idbranch = ${branchId} and state <> 'COMPLETED'`;
       // console.log('Facts request:' + sql);
 
@@ -87,22 +97,25 @@ exports.getWindowsById = async (req, res) => {
         if (!ticketsToWindows[row.winno].DELAYED) {
           ticketsToWindows[row.winno].DELAYED = [];
         }
+        
 
         if (factRows.length == 1) {
           if (factRows[0].state == "INSERVICE") {
             ticketsToWindows[row.winno].INSERVICE.push(factRows[0]);
           }
-          if (factRows[0].state == "DELAYED") {
+          else if (factRows[0].state == "DELAYED") {
             ticketsToWindows[row.winno].DELAYED.push(factRows[0]);
           }
+         
         } else {
           factRows.forEach((factRow) => {
             if (factRow.state == "INSERVICE") {
               ticketsToWindows[row.winno].INSERVICE.push(factRow);
             }
-            if (factRow.state == "DELAYED") {
+            else if (factRow.state == "DELAYED") {
               ticketsToWindows[row.winno].DELAYED.push(factRow);
             }
+            
             // ticketsToWindows[row.winno][factRow.state].push(factRow);
           });
         }
@@ -121,20 +134,14 @@ exports.getWindowsById = async (req, res) => {
       const winInfo = ticketsToWindows[key];
       const INSERVICE = winInfo.INSERVICE || [];
       const DELAYED = winInfo.DELAYED || [];
-
+      
       return {
         winno: key,
         active: winInfo.active,
         worktitle: winInfo.worktitle,
         name: winInfo.name,
-        INSERVICE: {
-          // rows: INSERVICE,
-          length: INSERVICE.length || 0,
-        },
-        DELAYED: {
-          // rows: DELAYED,
-          length: DELAYED.length || 0,
-        },
+        INSERVICE: INSERVICE.length || 0,
+        DELAYED: DELAYED.length || 0,
         ticketTotal: INSERVICE.length + DELAYED.length,
       };
     });
@@ -142,9 +149,11 @@ exports.getWindowsById = async (req, res) => {
     return res.status(200).json({
       message: "Success",
       count: rows.length,
-      data: {
-        windows: windowsJson,
-      },
+      newtickets: newtickets,
+      serving: servTickets,
+      windows: windowsJson,
+      
+    
     });
   } catch (error) {
     console.log(error);

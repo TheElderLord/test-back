@@ -9,4 +9,5 @@ module.exports = {
     dbport: process.env.MYSQL_PORT,
 
     port: process.env.PORT,
+    host: process.env.HOST,
 }

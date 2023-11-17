@@ -23,8 +23,8 @@ app.use('/api/v1/windows', windowRouter);
 app.use('/api/v1/roles', roleRouter);
 
 const port = constants.port;
-
-app.listen(port,'0.0.0.0', function () {
+const host = constants.host;
+app.listen(port, function () {
     console.log(`Example app listening on port ${port}!`);
 }); 
 
