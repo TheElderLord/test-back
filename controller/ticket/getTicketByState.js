@@ -1,15 +1,18 @@
 
 
 
+const getAlarmTicket = require('./getAlarmTicket');
 
 
 
 const getTicketStateTickets = async (rows) => {
     
-
     try {
-        
         const states = {};
+      
+        
+        
+        
         await Promise.all(
            
         rows.map(async (row) => {
@@ -37,6 +40,7 @@ const getTicketStateTickets = async (rows) => {
             data: Object.keys(states).map((stateName) => ({
                 stateName: stateName,
                 count: states[stateName].length,
+
                 // rows: states[stateName],
             })),
         };
