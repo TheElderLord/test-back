@@ -1,3 +1,4 @@
+
 const alltickets = require('./getTickets');
 const getAlarmTickets = require('./getAlarmTicket');
 const getRatingTicket = require('./getRatingTicket');
@@ -5,7 +6,32 @@ const getStatesTickets = require('./getTicketByState');
 const getServiceTicket = require('./getServiceTicket');
 const getBranchTickets = require('./getTicketByBranch');
 
-exports.getTickets = async (req, res) => {
+
+const wssSend = async () => {
+
+    const tickets = await alltickets();
+    const alarm = await getAlarmTickets(tickets);
+    const rating = await getRatingTicket(tickets);
+    const states = await getStatesTickets(tickets);
+    const service = await getServiceTicket(tickets);
+    const branch = await getBranchTickets(tickets);
+    // console.log(branch);
+    const data = {
+        message: 'Success',
+        count: tickets.length,
+        data: {
+            alarm: alarm,
+            serviceTickets: service,
+            states: states,
+            rating: rating,
+            branchTickets: branch,
+        },
+    };
+    return data;
+
+}
+
+const getTickets = async (req, res) => {
 
     const tickets = await alltickets();
     const alarm = await getAlarmTickets(tickets);
@@ -28,7 +54,7 @@ exports.getTickets = async (req, res) => {
     res.status(200).json(data);
 
 }
-exports.getTicketsByBranchId = async (req, res) => {
+const getTicketsByBranchId = async (req, res) => {
     const id = req.params.id;
     const tickets = await alltickets(id);
     const alarm = await getAlarmTickets(tickets);
@@ -48,6 +74,8 @@ exports.getTicketsByBranchId = async (req, res) => {
     res.status(200).json(data);
 
 }
+
+module.exports = { getTickets, getTicketsByBranchId, wssSend };
 
 
 // exports.getTickets = async (req, res) => {
