@@ -16,9 +16,9 @@ const sortWindows = async (branchId, windows) => {
         for (const key in windows) {
             const window = windows[key];
             // console.log('Window:', window);
-            console.log('Operator'+window.idoperator);
+            // console.log('Operator'+window.idoperator);
             const active = window.idoperator * 1 == 0 ? false : true;
-            console.log(active);
+            // console.log(active);
             const opId = window.idoperator;
             const worktitle = window.worktitle;
 
@@ -28,10 +28,10 @@ const sortWindows = async (branchId, windows) => {
 
 
             if (!ticketsToWindows[window.winno].INSERVICE) {
-                ticketsToWindows[window.winno].INSERVICE = 0;
+                ticketsToWindows[window.winno].INSERVICE = [];
             }
             if (!ticketsToWindows[window.winno].DELAYED) {
-                ticketsToWindows[window.winno].DELAYED = 0;
+                ticketsToWindows[window.winno].DELAYED = [];
             }
 
             ticketsToWindows[window.winno].active = active;
@@ -50,13 +50,29 @@ const sortWindows = async (branchId, windows) => {
 
             // const sql = `SELECT * FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state <> 'COMPLETED'`;
             // const factRows = await query(sql);
-            const insSql = `SELECT COUNT(*) as count FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'INSERVICE'`;
+            const insSql = `SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'INSERVICE'`;
             const inservCount = await query(insSql);
             // console.log(insSql)
-            const delayedCount = await query(`SELECT COUNT(*) as count FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'DELAYED'`);
-            console.log(inservCount[0].count);
-            ticketsToWindows[window.winno].INSERVICE += inservCount[0].count;
-            ticketsToWindows[window.winno].DELAYED += delayedCount[0].count;
+            const delayedCount = await query(`SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'DELAYED'`);
+            // console.log(delayedCount);
+            if(inservCount.length == 1){
+                ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
+            }
+            else{
+                inservCount.forEach((inservCount)=>{
+                    ticketsToWindows[window.winno].INSERVICE.push(inservCount);
+                })
+            }
+            if(delayedCount.length == 1){
+                ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
+            }
+            else{
+                delayedCount.forEach((delayedCount)=>{
+                    ticketsToWindows[window.winno].DELAYED.push(delayedCount);
+                })
+            }
+            // ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
+            // ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
 
 
         }
