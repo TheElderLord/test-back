@@ -2,103 +2,88 @@ const connection = require('../../db/connection');
 const getBranchList = require('../branch/getBranches');
 
 const getBranchTickets = async () => {
-  const branches = await getBranchList();
-  const rootBranches = branches.map((branch) => {
-    return {
-      id: branch.F_ID,
-      name: branch.F_NAME,
-      children: branch.children.map((child) => {
-        return {
-          id: child.F_ID,
-          name: child.F_NAME,
-        };
-      }),
-    };
-  });
-
   try {
+    const branches = await getBranchList();
     const branchTicketsArray = {};
 
     await Promise.all(
-      rootBranches.map(async (branch) => {
-        const branchName = branch.name;
-        const branchId = branch.id;
-        const children = branch.children;
+      branches.map(async (branch) => {
+        const { F_ID: branchId, F_NAME: branchName, children } = branch;
+        const branchTickets = {
+          INSERVICE: [],
+          NEW: [],
+          MISSED: [],
+          COMPLETED: [],
+          DELAYED: [],
+        };
 
-        if (!branchTicketsArray[branchName]) {
-          branchTicketsArray[branchName] = [];
-        }
+        await Promise.all(
+          children.map(async (child) => {
+            const { F_ID: childId, F_NAME: childName } = child;
+            const childTickets = {
+              INSERVICE: [],
+              NEW: [],
+              MISSED: [],
+              COMPLETED: [],
+              DELAYED: [],
+            };
 
-        const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.id).join(",")})`);
+            const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId}`);
+            rows.forEach((row) => {
+              const { state } = row;
+              childTickets[state].push(row);
+            });
 
-       
-          rows.map(async (row) => {
-            const servover = row.servover;
-            const waitover = row.waitover;
-            const rate = row.rating;
-            const serviceName = row.servicename;
-            const state = row.state;
-
-            // if (!branchTicketsArray[branchName][serviceName]) {
-            //   branchTicketsArray[branchName][serviceName] = [];
-            // }
-
-            if (!branchTicketsArray[branchName]["INSERVICE"]) {
-              branchTicketsArray[branchName]["INSERVICE"] = [];
-            }
-            if (!branchTicketsArray[branchName]["NEW"]) {
-              branchTicketsArray[branchName]["NEW"] = [];
-            }
-            if (!branchTicketsArray[branchName]["MISSED"]) {
-              branchTicketsArray[branchName]["MISSED"] = [];
-            }
-            if (!branchTicketsArray[branchName]["COMPLETED"]) {
-              branchTicketsArray[branchName]["COMPLETED"] = [];
-            }
-            if (!branchTicketsArray[branchName]["DELAYED"]) {
-              branchTicketsArray[branchName]["DELAYED"] = [];
-            }
-
-            // branchTicketsArray[branchName][serviceName].push(row);
-            if(state === "INSERVICE"){
-              branchTicketsArray[branchName]["INSERVICE"].push(row);
-            }
-            if(state === "NEW"){
-              branchTicketsArray[branchName]["NEW"].push(row);
-            }
-            if(state === "MISSED"){
-              branchTicketsArray[branchName]["MISSED"].push(row);
-            }
-            if(state === "COMPLETED"){
-              branchTicketsArray[branchName]["COMPLETED"].push(row);
-            }
-            if(state === "DELAYED"){
-              branchTicketsArray[branchName]["DELAYED"].push(row);
-            }
-
+            branchTickets[childName] = childTickets;
           })
-        
+        );
+
+        const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")})`);
+        rows.forEach((row) => {
+          const { state } = row;
+          branchTickets[state].push(row);
+        });
+
+        branchTicketsArray[branchName] = branchTickets;
       })
     );
-      const branchObject = Object.keys(branchTicketsArray).map((branchName) => {
-        const ins = branchTicketsArray[branchName]["INSERVICE"];
-        const newT = branchTicketsArray[branchName]["NEW"];
-        const mis = branchTicketsArray[branchName]["MISSED"];
-        const com = branchTicketsArray[branchName]["COMPLETED"];
-        const del = branchTicketsArray[branchName]["DELAYED"];
+
+    console.log(branchTicketsArray);
+
+    const branchObject = branches.map((branch) => {
+      const { F_NAME: branchName, children } = branch;
+      const branchTickets = branchTicketsArray[branchName];
+
+      const childObjects = children.map((child) => {
+        const { F_NAME: childName } = child;
+        const childTickets = branchTickets[childName];
+
         return {
-          branchName: branchName,
+          branchName: childName,
           stateTickets: {
-            INSERVICE: ins ? ins.length : 0,
-            NEW: newT ? newT.length : 0,
-            MISSED: mis ? mis.length : 0,
-            COMPLETED: com ? com.length : 0,
-            DELAYED: del ? del.length : 0,
+            INSERVICE: childTickets.INSERVICE.length,
+            NEW: childTickets.NEW.length,
+            MISSED: childTickets.MISSED.length,
+            COMPLETED: childTickets.COMPLETED.length,
+            DELAYED: childTickets.DELAYED.length,
           },
         };
       });
-      
-      return branchObject;
+
+      return {
+        branchName,
+        stateTickets: {
+          INSERVICE: branchTickets.INSERVICE.length,
+          NEW: branchTickets.NEW.length,
+          MISSED: branchTickets.MISSED.length,
+          COMPLETED: branchTickets.COMPLETED.length,
+          DELAYED: branchTickets.DELAYED.length,
+        },
+        children: childObjects,
+      };
+    });
+
+    return branchObject;
   } catch (err) {
     console.error(err);
     throw err; // Propagate the error

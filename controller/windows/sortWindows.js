@@ -5,12 +5,20 @@ const { query } = require('./getWindows');
 const sortWindows = async (branchId, windows) => {
     try {
         const ticketsToWindows = {};
-        let newtickets = 0;
+        let newtickets = [];
         let servTickets = 0;
         // console.log('Windows:', windows);
-        newtickets = await query(`SELECT COUNT(*) as count FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`);
+        const newResponse = await query(`SELECT *  FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`);
+        if(newResponse.length == 1){
+            newtickets.push(newResponse[0]);
+        }
+        else {
+            newResponse.forEach((newResponse)=>{
+                newtickets.push(newResponse);
+            })
+        }
         // console.log(`SELECT COUNT(*) as count FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`)
-        newtickets = newtickets[0].count;
+     
         servTickets = await query(`SELECT COUNT(*) as count FROM facts WHERE state = 'INSERVICE' AND idbranch = ${branchId}`);
         servTickets = servTickets[0].count;
         for (const key in windows) {
