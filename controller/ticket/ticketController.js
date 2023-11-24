@@ -74,8 +74,19 @@ const getTicketsByBranchId = async (req, res) => {
     res.status(200).json(data);
 
 }
+const getTicketList = async (req, res) => {
+    const tickets = await alltickets();
+    const data = {
+        message: 'Success',
+        count: tickets.length,
+        data: {
+            tickets: tickets,
+        },
+    };
+    res.status(200).json(data);
+}
 
-module.exports = { getTickets, getTicketsByBranchId, wssSend };
+module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 
 
 // exports.getTickets = async (req, res) => {

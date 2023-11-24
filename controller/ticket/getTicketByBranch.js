@@ -15,6 +15,7 @@ const getBranchTickets = async () => {
           MISSED: [],
           COMPLETED: [],
           DELAYED: [],
+          ALARM: [],
         };
 
         await Promise.all(
@@ -26,12 +27,16 @@ const getBranchTickets = async () => {
               MISSED: [],
               COMPLETED: [],
               DELAYED: [],
+              ALARM: [],
             };
 
             const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId}`);
             rows.forEach((row) => {
-              const { state } = row;
+              const { state,servover,waitover,rating } = row;
               childTickets[state].push(row);
+              if(servover == "true" || waitover == "true" || rating == "1" || rating == "2"){
+                childTickets.ALARM.push(row);
+              }
             });
 
             branchTickets[childName] = childTickets;
@@ -40,15 +45,17 @@ const getBranchTickets = async () => {
 
         const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")})`);
         rows.forEach((row) => {
-          const { state } = row;
+          const { state,waitover,servover,rating } = row;
           branchTickets[state].push(row);
+          if(servover == "true" || waitover == "true" || rating == "1" || rating == "2")
+          branchTickets.ALARM.push(row);
         });
 
         branchTicketsArray[branchName] = branchTickets;
       })
     );
 
-    console.log(branchTicketsArray);
+    // console.log(branchTicketsArray);
 
     const branchObject = branches.map((branch) => {
       const { F_NAME: branchName, children } = branch;
@@ -66,6 +73,7 @@ const getBranchTickets = async () => {
             MISSED: childTickets.MISSED.length,
             COMPLETED: childTickets.COMPLETED.length,
             DELAYED: childTickets.DELAYED.length,
+            ALARM: childTickets.ALARM.length,
           },
         };
       });
@@ -78,6 +86,7 @@ const getBranchTickets = async () => {
           MISSED: branchTickets.MISSED.length,
           COMPLETED: branchTickets.COMPLETED.length,
           DELAYED: branchTickets.DELAYED.length,
+          ALARM: branchTickets.ALARM.length,
         },
         children: childObjects,
       };

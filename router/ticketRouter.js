@@ -1,12 +1,12 @@
 const express = require('express');
-const {getTickets,getTicketsByBranchId,wssSend} = require('../controller/ticket/ticketController');
+const {getTickets,getTicketsByBranchId,wssSend,getTicketList} = require('../controller/ticket/ticketController');
 
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 
-let i =0;
+
 wss.on('connection',(socket,req)=>{
     setInterval(async()=>{
         const tickets = await wssSend();
@@ -22,6 +22,9 @@ router.route('/').get((req, res) => {
 });
 router.route('/:id').get((req, res) => {
     getTicketsByBranchId(req, res);
+});
+router.get('/list/t', (req, res) => {
+    getTicketList(req, res);
 });
 
 module.exports = { router , wss};
