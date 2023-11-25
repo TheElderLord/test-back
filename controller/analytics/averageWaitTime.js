@@ -1,20 +1,62 @@
 
-
-
+// "total": 152391.56,
+//       "data": {
+//         "Прием документов": 21800.1599,
+//         "Налоги на землю, имущество": 43572.75281666665,
+//         "Налог на транспортные средства": 43460.7978,
+//         "Выдача готовых документов ": 43558.53606666667,
+//         "Лица с ограниченными возможностями ФЛ": 0.50255,
+//         "Терминал самообслуживания": -1.9230333333333332,
+//         "Банкротство физических лиц": 0.09696666666666667,
+//         "Административное производство": 0.6405666666666666
+//       }
 const getAverageWaitTime = async (facts) => {
+    // console.log(facts);
+    const resultArray = {};
+    let totalWaitT = 0;
+    facts.map((fact) => {
+        const servicename = fact.servicename;
+        if (!resultArray[servicename]) {
+            resultArray[servicename] = 0;
+        }
+        fact.rows.map((row) => {
+            const state = row.state;
+            const start = row.starttime;
+           
+            if(state == "NEW"){
+                const end = new Date();
+                const diff = end - start;
+                // console.log("NEW",diff)
+                const diffInMinutes = diff / 60000;
+                resultArray[servicename] += diffInMinutes;
+            }
+            else if(state == "INSERVICE" || state == "COMPLETED"){
+                const end = row.startservtime;
+                const diff = end - start;
+                // console.log("INSERVICE",end);
+                const diffInMinutes = diff / 60000;
+                resultArray[servicename] += diffInMinutes;
+            }
+           
+        });
+        if(fact.rows.length > 0)
+        resultArray[servicename] /= fact.rows.length;
+        
+        totalWaitT += resultArray[servicename];
+
+
+    });
+    const waitObject = {
+        total: Math.abs(Math.round(totalWaitT)) ,
+        data: Object.keys(resultArray).map((servicename) => ({
+            servicename: servicename,
+            count: Math.abs(Math.round(resultArray[servicename])),
+        })),
+    }
+    return waitObject;
 }
 
-function query(sql, values) {
-    return new Promise((resolve, reject) => {
-      connection.query(sql, values, (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
-  }
+
 module.exports = getAverageWaitTime;
 
 //Wait time per branches

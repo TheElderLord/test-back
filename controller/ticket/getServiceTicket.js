@@ -31,7 +31,7 @@
             data: Object.keys(serviceTickets).map((serviceName) => ({
                 servicename: serviceName,
                 length: serviceTickets[serviceName].length,
-                // rows: serviceTickets[serviceName],
+                rows: serviceTickets[serviceName],
             })),
         };
 
