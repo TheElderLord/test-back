@@ -14,7 +14,7 @@ const serviceRouter = require('./router/serviceRouter');
 const windowRouter = require('./router/windowRouter');
 const roleRouter = require('./router/roleRouter');
 const analyticsRouter = require('./router/analyticsRouter');
-
+const authRouter = require('./router/authRouter');
 
 const app = express();
 app.use(cors());
@@ -28,6 +28,7 @@ app.use('/api/v1/services', serviceRouter);
 app.use('/api/v1/windows', windowRouter);
 app.use('/api/v1/roles', roleRouter);
 app.use('/api/v1/analytics', analyticsRouter);
+app.use('/api/v1/auth', authRouter);
 
 const port = constants.port;
 const host = constants.host;
