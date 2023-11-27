@@ -8,6 +8,7 @@ const wss = new WebSocket.Server({ port: 8080 });
 
 
 wss.on('connection',(socket,req)=>{
+    console.log('connected');
     setInterval(async()=>{
         const tickets = await wssSend();
 

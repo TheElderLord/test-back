@@ -14,15 +14,19 @@ exports.login = async (req, res) => {
     const { username, password } = req.body;
 
     // Check if the user exists
-    const user = await query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
-  
-    if (user) {
+    const user = await query('SELECT * FROM users WHERE login = ? AND password = ?', [username, password]);
+    console.log(username, password)
+    if (user && user.length > 0) {
       // Generate a JWT token
       const token = jwt.sign({ userId: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
   
       res.json({ 
         message: 'Authentication successful!',
-        token
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+        },
        });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
