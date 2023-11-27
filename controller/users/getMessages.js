@@ -3,9 +3,12 @@
 
 const connection = require('../../db/connection');
 const getMessages = async (req, res) => {
-    const messages = await query(`SELECT messages.id as message_id, users.name as user_login, messages.txt as message_txt
+
+    const sql = `SELECT messages.id as message_id, users.login as user_login, messages.txt as message_txt
     FROM messages
-    JOIN users ON messages.user_id = users.id;`);
+    JOIN users ON messages.user_id = users.id;`;
+    const messages = await query(sql);
+    // console.log(sql)
     return messages;
 }
 

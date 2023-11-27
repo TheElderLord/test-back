@@ -2,6 +2,7 @@ const connection = require('../../db/connection');
 
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const express = require('express')
 
 const app = express();
 const secretKey = 'sit'; // Replace with your actual secret key

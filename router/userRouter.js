@@ -10,5 +10,8 @@ router.route('/').get((req, res) => {
 router.route('/last').get((req, res) => {
     userController.getLastUsers(req, res);
 });
+router.route('/messages').get((req,res)=>{
+    userController.getMessages(req,res);
+})
 
 module.exports = router;
