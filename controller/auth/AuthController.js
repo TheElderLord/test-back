@@ -18,7 +18,7 @@ exports.login = async (req, res) => {
     const user = await query('SELECT * FROM users WHERE login = ? AND password = ?', [username, password]);
     // console.log(username, password)
     if (user && user.length > 0) {
-      const sql = `Update users SET sign_in_date = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE login = '${username}'`;
+      const sql = `Update users SET sign_in_date = '${moment().format('YYYY-DD-MM HH:mm:ss')}' WHERE id = ${user[0].id}`;
       await query(sql);
       // Generate a JWT token
       const token = jwt.sign({ userId: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
