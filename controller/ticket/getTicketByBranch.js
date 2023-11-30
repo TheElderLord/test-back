@@ -33,6 +33,10 @@ const getBranchTickets = async () => {
             const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId}`);
             rows.forEach((row) => {
               const { state,servover,waitover,rating } = row;
+              if(!childTickets[state]){
+                childTickets[state] = [];
+              }
+              console.log(typeof childTickets[state]);
               childTickets[state].push(row);
               if(servover == "true" || waitover == "true" || rating == "1" || rating == "2"){
                 childTickets.ALARM.push(row);
