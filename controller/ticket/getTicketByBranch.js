@@ -36,7 +36,7 @@ const getBranchTickets = async () => {
               if(!childTickets[state]){
                 childTickets[state] = [];
               }
-              console.log(typeof childTickets[state]);
+              // console.log(typeof childTickets[state]);
               childTickets[state].push(row);
               if(servover == "true" || waitover == "true" || rating == "1" || rating == "2"){
                 childTickets.ALARM.push(row);
@@ -48,12 +48,19 @@ const getBranchTickets = async () => {
         );
 
         const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")})`);
+        try{
         rows.forEach((row) => {
           const { state,waitover,servover,rating } = row;
+          if(!branchTickets[state]){
+            branchTickets[state] = [];
+          }
           branchTickets[state].push(row);
           if(servover == "true" || waitover == "true" || rating == "1" || rating == "2")
           branchTickets.ALARM.push(row);
         });
+      }catch(err){
+        console.log(err)
+      }
 
         branchTicketsArray[branchName] = branchTickets;
       })
