@@ -46,6 +46,7 @@ const getAverageWaitTime = async (facts) => {
 
 
     });
+    totalWaitT/=facts.length;
     const waitObject = {
         total: Math.abs(Math.round(totalWaitT)) ,
         data: Object.keys(resultArray).map((servicename) => ({

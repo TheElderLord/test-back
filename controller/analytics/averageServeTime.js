@@ -35,6 +35,7 @@ const getAverageServTime = async (facts) => {
 
 
     });
+    totalServ = totalServ/facts.length;
     const servObject = {
         total: Math.abs(Math.round(totalServ)) ,
         data: Object.keys(resultArray).map((servicename) => ({

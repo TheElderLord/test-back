@@ -43,7 +43,7 @@ const averageServHours = async (tickets) => {
         return acc;
     }, {});
     // console.log(sortedResult);
-
+    
     const resultJson = Object.keys(sortedResult).map((key) => {
         const [hour, minute] = key.split(':');
         const avg = sortedResult[key].reduce((a, b) => a + b, 0) / sortedResult[key].length;
