@@ -1,4 +1,6 @@
 const connection = require('../../db/connection');
+const {secret} = require('../../constants/constant')
+
 const moment = require('moment');
 
 const jwt = require('jsonwebtoken');
@@ -6,7 +8,7 @@ const bodyParser = require('body-parser');
 const express = require('express')
 
 const app = express();
-const secretKey = 'sit'; // Replace with your actual secret key
+const secretKey = secret; // Replace with your actual secret key
 
 app.use(bodyParser.json());
 

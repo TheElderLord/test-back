@@ -22,13 +22,45 @@ const getAverageWaitTime = async (facts) => {
         fact.rows.map((row) => {
             const state = row.state;
             const start = row.starttime;
+
+            if(!resultArray[servicename]["0-5"]){
+                resultArray[servicename]["0-5"]=0;
+            }
+            if(!resultArray[servicename]["5-10"]){
+                resultArray[servicename]["5-10"]=0
+            }
+            if(!resultArray[servicename]["10-20"]){
+                resultArray[servicename]["10-20"]=0
+            }
+            if(!resultArray[servicename]["20-30"]){
+                resultArray[servicename]["20-30"]=0
+            }
+            if(!resultArray[servicename]["30>"]){
+                resultArray[servicename]["30>"]=0
+            }
+            
            
             if(state == "NEW"){
                 const end = new Date();
                 const diff = end - start;
                 // console.log("NEW",diff)
-                const diffInMinutes = diff / 60000;
+                const diffInMinutes = diff /60000;
                 resultArray[servicename] += diffInMinutes;
+                if(diffInMinutes >= 0 && diffInMinutes <=5){
+                    resultArray[servicename]["0-5"] +=1;
+                }
+                else if(diffInMinutes >=5 && diffInMinutes <=10){
+                    resultArray[servicename]["5-10"] +=1;
+                }
+                else if(diffInMinutes >= 10 && diffInMinutes <=20){
+                    resultArray[servicename]["10-20"] +=1;
+                }
+                else if(diffInMinutes >= 20 && diffInMinutes<=30){
+                    resultArray[servicename]["20-30"] +=1;
+                }
+                else if(diffInMinutes >=30 ){
+                    resultArray[servicename]["30>"] +=1;
+                }
             }
             else if(state == "INSERVICE" || state == "COMPLETED"){
                 const end = row.startservtime;
@@ -36,6 +68,21 @@ const getAverageWaitTime = async (facts) => {
                 // console.log("INSERVICE",end);
                 const diffInMinutes = diff / 60000;
                 resultArray[servicename] += diffInMinutes;
+                if(diffInMinutes >= 0 && diffInMinutes <=5){
+                    resultArray[servicename]["0-5"] +=1;
+                }
+                else if(diffInMinutes >=5 && diffInMinutes <=10){
+                    resultArray[servicename]["5-10"] +=1;
+                }
+                else if(diffInMinutes >= 10 && diffInMinutes <=20){
+                    resultArray[servicename]["10-20"] +=1;
+                }
+                else if(diffInMinutes >= 20 && diffInMinutes<=30){
+                    resultArray[servicename]["20-30"] +=1;
+                }
+                else if(diffInMinutes >=30 ){
+                    resultArray[servicename]["30>"] +=1;
+                }
             }
            
         });
@@ -47,14 +94,20 @@ const getAverageWaitTime = async (facts) => {
 
     });
     totalWaitT/=facts.length;
-    const waitObject = {
-        total: Math.abs(Math.round(totalWaitT)) ,
-        data: Object.keys(resultArray).map((servicename) => ({
-            servicename: servicename,
-            count: Math.abs(Math.round(resultArray[servicename])),
-        })),
-    }
-    return waitObject;
+    Object.keys(resultArray).map((servicename) => {
+        Object.keys(resultArray[servicename]).map((el)=>{
+            console.log(resultArray[servicename][el])
+        })
+    })
+    console.log(resultArray)
+    // const waitObject = {
+    //     total: totalWaitT ,
+    //     data: Object.keys(resultArray).map((servicename) => ({
+    //         servicename: servicename,
+    //         count: Math.abs(Math.round(resultArray[servicename])),
+    //     })),
+    // }
+    // return waitObject;
 }
 
 

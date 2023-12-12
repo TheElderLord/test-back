@@ -16,6 +16,8 @@ const roleRouter = require('./router/roleRouter');
 const analyticsRouter = require('./router/analyticsRouter');
 const authRouter = require('./router/authRouter');
 
+const checkTokenMiddleware = require('./middleware/middleware')
+
 const app = express();
 app.use(cors());
 app.use(express.json());
