@@ -21,7 +21,7 @@ const analytics = async (req, res) => {
     const averageServeTime = await getAverageServTime(servTickets);
     const waitOv = await waitOver(servTickets);
     const peakHours = await getPeakHours(tickets);
-    const averageHours = await averageServHours(tickets);
+    const averageServ = await averageServHours(tickets);
     const averageWait = await averageWaitHours(tickets);
     return res.status(200).json({
         message:'Success',
@@ -30,7 +30,7 @@ const analytics = async (req, res) => {
             averageServeTime,
             waitOv,
             peakHours,
-            averageHours,
+            averageServ,
             averageWait
         }
     });

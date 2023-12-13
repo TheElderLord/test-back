@@ -2,60 +2,68 @@ const averageWaitHours = async (tickets) => {
     const result = {};
 
     tickets.forEach((ticket) => {
-        const date = new Date(ticket.starttime);
+        const start = ticket.starttime * 1;
+        const date = new Date(start);
         const hour = date.getHours();
-        const minute = date.getMinutes();
-        const starttime = ticket.starttime*1;
-        
-        const key = `${hour}:${minute < 10 ? '0' + minute : minute}`;
-        if (!result[key]) {
-            result[key] = [];
-        }
+        const minutes = date.getMinutes();
 
         const state = ticket.state;
-        if(state == "NEW"){
+
+        const key = `${hour}:${minutes <= 30 ? '00' : '30'}`;
+        if (!result[key]) {
+            result[key] = {
+                time: key,
+                count: 0,
+                ticketCount:0
+            };
+        }
+        if(state === "NEW"){
             const endtime = new Date();
-            const diff = (endtime - starttime)/60000;
-            result[key].push(diff);
+            const diff = endtime - start;
+            const formatDiff = diff/60000;
+            result[key].count += formatDiff;
+            result[key].ticketCount++;
         }
-        else if(state == "COMPLETED" || state == "INSERVICE"){
-            const endtime = ticket.startservtime*1;
-            const diff = (endtime - starttime)/60000;
-            result[key].push(diff);
+        else if(state === "INSERVICE" || state === "COMPLETED"){
+            const endtime = ticket.startservtime;
+            const diff = endtime - start;
+            const formatDiff = diff/60000;
+            result[key].count += formatDiff; 
+            result[key].ticketCount++;
         }
-        // if(ticket.rows.length > 0){
-        //     result[key] /= ticket.rows.length;
-        // }
+        
     });
-    
-    // console.log(result);
 
-    const sortedResult = Object.keys(result).sort((a, b) => {
-        const [hourA, minuteA] = a.split(':').map(Number);
-        const [hourB, minuteB] = b.split(':').map(Number);
+    const resultArray = Object.values(result).sort((a, b) => {
+        const timeA = a.time.split(':').map(Number);
+        const timeB = b.time.split(':').map(Number);
 
-        if (hourA !== hourB) {
-            return hourA - hourB;
+        if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
         } else {
-            return minuteA - minuteB;
+            return timeA[1] - timeB[1];
         }
-    }).reduce((acc, key) => {
-        acc[key] = result[key];
-        return acc;
-    }, {});
-    // console.log(sortedResult);
+    });
 
-    const resultJson = Object.keys(sortedResult).map((key) => {
-        const [hour, minute] = key.split(':');
-        const avg = sortedResult[key].reduce((a, b) => a + b, 0) / sortedResult[key].length;
+    const resultObject = Object.keys(resultArray).map(key => {
+        const count = resultArray[key].count;
+        const ticketCount = resultArray[key].ticketCount;
+    
+        const a = ticketCount > 0 ? (count / ticketCount).toFixed(2) : 0;
+    
         return {
-            hour: hour,
-            minute: parseInt(minute) < 10 ? '0' + parseInt(minute) : parseInt(minute) + '',
-            value: Math.round(avg) ,
-            // tickets: sortedResult[key],
+            time: resultArray[key].time,
+            count: isNaN(a) ? 0 : parseFloat(a)
         };
     });
+    
 
-    return resultJson;
+    // console.log("AverageWaitHours",resultObject)
+
+    return resultObject;
 };
+
 module.exports = averageWaitHours;
+
+
+
