@@ -2,135 +2,145 @@ const peakHours = async (tickets) => {
     const result = {};
 
     tickets.forEach((ticket) => {
-        const date = new Date(ticket.starttime);
+        const start = ticket.starttime * 1;
+        const date = new Date(start);
         const hour = date.getHours();
-        const minute = date.getMinutes();
+        const minutes = date.getMinutes();
 
-        const key = `${hour}:${minute < 10 ? '0' + minute : minute}`;
+        const key = `${hour}:${minutes <= 30 ? '00' : '30'}`;
         if (!result[key]) {
-            result[key] = [];
-        }
-        if (!result[key]["WAITOVER"])
-            result[key]["WAITOVER"] = 0;
-        if (!result[key]["SERVOVER"])
-            result[key]["SERVOVER"] = 0;
-        if (!result[key]["BAD"])
-            result[key]["BAD"] = 0;
-
-        if (ticket.waitover == "true") {
-            result[key]["WAITOVER"]++;
-        }
-        if (ticket.servover == "true") {
-            result[key]["SERVOVER"]++;
-        }
-        if (ticket.rating == 1 || ticket.rating == 2) {
-            result[key]["BAD"]++;
+            result[key] = {
+                time: key,
+                count: 0,
+                WAITOVER: 0,
+                SERVOVER: 0,
+                BAD: 0,
+            };
         }
 
-        result[key].push(ticket);
+        result[key].count += 1;
+        if (ticket.waitover === "true") {
+            result[key].WAITOVER += 1;
+        }
+        if (ticket.servover === "true") {
+            result[key].SERVOVER += 1;
+        }
+        if (ticket.rating === 1 || ticket.rating === 2) {
+            result[key].BAD += 1;
+        }
     });
-    
 
-    const sortedResult = Object.keys(result).sort((a, b) => {
-        const [hourA, minuteA] = a.split(':').map(Number);
-        const [hourB, minuteB] = b.split(':').map(Number);
+    const resultArray = Object.values(result).sort((a, b) => {
+        const timeA = a.time.split(':').map(Number);
+        const timeB = b.time.split(':').map(Number);
 
-        if (hourA !== hourB) {
-            return hourA - hourB;
+        if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
         } else {
-            return minuteA - minuteB;
+            return timeA[1] - timeB[1];
         }
-    }).reduce((acc, key) => {
-        acc[key] = result[key];
-        return acc;
-    }, {});
-    // console.log(sortedResult);
-
-    const resultJson = Object.keys(sortedResult).map((key) => {
-        const [hour, minute] = key.split(':');
-        const WaitOver = sortedResult[key]["WAITOVER"];
-        const ServOver = sortedResult[key]["SERVOVER"];
-        const Bad = sortedResult[key]["BAD"];
-        return {
-            hour: hour,
-            minute: parseInt(minute) < 10 ? '0' + parseInt(minute) : parseInt(minute) + '',
-            count: sortedResult[key].length,
-            WaitOver: WaitOver,
-            ServOver: ServOver,
-            Bad: Bad,
-            // tickets: sortedResult[key],
-        };
     });
 
-    return resultJson;
+    // console.log(resultArray);
+
+    return resultArray;
 };
+
 module.exports = peakHours;
+
+
 
 
 // const peakHours = async (tickets) => {
 //     const result = {};
 
 //     tickets.forEach((ticket) => {
-//         const date = new Date(ticket.starttime);
+//         const start = ticket.starttime * 1
+//         const date = new Date(start);
 //         const hour = date.getHours();
-//         const minute = date.getMinutes();
+//         const minutes = date.getMinutes();
 
-//         const key = `${hour}:${minute < 10 ? '0' + minute : minute}`;
-//         if (!result[key]) {
-//             result[key] = [];
-//         }
-//         if (!result[key]["WAITOVER"])
-//             result[key]["WAITOVER"] = 0;
-//         if (!result[key]["SERVOVER"])
-//             result[key]["SERVOVER"] = 0;
-//         if (!result[key]["BAD"])
-//             result[key]["BAD"] = 0;
 
-//         if (ticket.waitover == "true") {
-//             result[key]["WAITOVER"]++;
+//         // if (!result[hour]) {
+//         //     result[hour] = {
+//         //         time: hour,
+//         //         count: 0,
+//         //         WAITOVER: 0,
+//         //         SERVOVER: 0,
+//         //         BAD: 0,
+//         //     };
+//         // }
+
+
+//         if (minutes <= 30) {
+//             if (!result[hour]["30"]) {
+//                 result[hour]["30"] = {
+//                     time: hour,
+//                     count: 0,
+//                     WAITOVER: 0,
+//                     SERVOVER: 0,
+//                     BAD: 0,
+//                 };
+//             }
 //         }
-//         if (ticket.servover == "true") {
-//             result[key]["SERVOVER"]++;
-//         }
-//         if (ticket.rating == 1 || ticket.rating == 2) {
-//             result[key]["BAD"]++;
+//         else if (minutes > 30 && minutes <= 59) {
+//             if (!result[hour + 1]) {
+//                 result[hour + 1] = {
+//                     time: hour,
+//                     count: 0,
+//                     WAITOVER: 0,
+//                     SERVOVER: 0,
+//                     BAD: 0,
+//                 };
+//             }
 //         }
 
-//         result[key].push(ticket);
+
+//         if (minutes <= 30) {
+//             result[hour]["30"].count += 1;
+//             if (ticket.waitover === "true") {
+//                 result[hour]["30"].WAITOVER += 1;
+//             }
+//             if (ticket.servover === "true") {
+//                 result[hour]["30"].SERVOVER += 1;
+//             }
+//             if (ticket.rating === 1 || ticket.rating === 2) {
+//                 result[hour]["30"].BAD += 1;
+//             }
+
+//         }
+//         else if (minutes > 30 && minutes <= 59) {
+//             result[hour + 1].count += 1;
+//             if (ticket.waitover === "true") {
+//                 result[hour + 1].WAITOVER += 1;
+//             }
+//             if (ticket.servover === "true") {
+//                 result[hour + 1].SERVOVER += 1;
+//             }
+//             if (ticket.rating === 1 || ticket.rating === 2) {
+//                 result[hour + 1].BAD += 1;
+//             }
+//         }
+
+//         // result[hour].count += 1;
+//         // if (ticket.waitover === "true") {
+//         //     result[hour].WAITOVER += 1;
+//         // }
+//         // if (ticket.servover === "true") {
+//         //     result[hour].SERVOVER += 1;
+//         // }
+//         // if (ticket.rating === 1 || ticket.rating === 2) {
+//         //     result[hour].BAD += 1;
+//         // }
 //     });
-    
+//     console.log(result)
 
-//     const sortedResult = Object.keys(result).sort((a, b) => {
-//         const [hourA, minuteA] = a.split(':').map(Number);
-//         const [hourB, minuteB] = b.split(':').map(Number);
+//     const resultArray = Object.values(result);
 
-//         if (hourA !== hourB) {
-//             return hourA - hourB;
-//         } else {
-//             return minuteA - minuteB;
-//         }
-//     }).reduce((acc, key) => {
-//         acc[key] = result[key];
-//         return acc;
-//     }, {});
-//     // console.log(sortedResult);
+//     // console.log(resultArray);
 
-//     const resultJson = Object.keys(sortedResult).map((key) => {
-//         const [hour, minute] = key.split(':');
-//         const WaitOver = sortedResult[key]["WAITOVER"];
-//         const ServOver = sortedResult[key]["SERVOVER"];
-//         const Bad = sortedResult[key]["BAD"];
-//         return {
-//             hour: hour,
-//             minute: parseInt(minute) < 10 ? '0' + parseInt(minute) : parseInt(minute) + '',
-//             count: sortedResult[key].length,
-//             WaitOver: WaitOver,
-//             ServOver: ServOver,
-//             Bad: Bad,
-//             // tickets: sortedResult[key],
-//         };
-//     });
-
-//     return resultJson;
+//     return resultArray;
 // };
+
 // module.exports = peakHours;
+
