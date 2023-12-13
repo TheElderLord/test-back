@@ -2,7 +2,7 @@
 
 
 const connection = require('../../db/connection');
-const getMessages = async (req, res) => {
+const getMessages = async () => {
 
     const sql = `SELECT messages.id as message_id, users.login as user_login,created_at,updated_at, messages.txt as message_txt
     FROM messages

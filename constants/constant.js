@@ -10,6 +10,8 @@ module.exports = {
 
     port: process.env.PORT,
     host: process.env.HOST,
+    websocket_port:process.env.WEBSOCKET_PORT,
 
-    secret: process.env.SECRET_KEY
+    secret: process.env.SECRET_KEY,
+
 }

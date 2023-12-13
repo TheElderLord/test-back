@@ -1,12 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+const socketIO = require('socket.io');
 
 // const WebSocket = require('ws');
 
 // const wss = new WebSocket.Server({ port: 8080 });
 
 const constants = require('./constants/constant');
-const { router,wss } = require('./router/ticketRouter');
+const { router } = require('./router/ticketRouter');
 const branchRouter = require('./router/branchRouter');
 const userRouter = require('./router/userRouter');
 const employeeRouter = require('./router/employeeRouter');
@@ -16,9 +18,18 @@ const roleRouter = require('./router/roleRouter');
 const analyticsRouter = require('./router/analyticsRouter');
 const authRouter = require('./router/authRouter');
 
-const checkTokenMiddleware = require('./middleware/middleware')
+const checkTokenMiddleware = require('./middleware/middleware');
+
+const websock = require('./websocket/webController');
+
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
+
+
+
 app.use(cors());
 app.use(express.json());
 
@@ -32,9 +43,11 @@ app.use('/api/v1/roles', roleRouter);
 app.use('/api/v1/analytics', analyticsRouter);
 app.use('/api/v1/auth', authRouter);
 
+websock(io);
+
 const port = constants.port;
 const host = constants.host;
-app.listen(port, function () {
+server.listen(port, function () {
     console.log(`Example app listening on port ${port}!`);
 }); 
 
