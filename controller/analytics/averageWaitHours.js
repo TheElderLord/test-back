@@ -28,6 +28,7 @@ const averageWaitHours = async (tickets) => {
         // }
     });
     
+    // console.log(result);
 
     const sortedResult = Object.keys(result).sort((a, b) => {
         const [hourA, minuteA] = a.split(':').map(Number);
