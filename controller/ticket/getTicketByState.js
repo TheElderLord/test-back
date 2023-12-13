@@ -1,10 +1,4 @@
 
-
-
-const getAlarmTicket = require('./getAlarmTicket');
-
-
-
 const getTicketStateTickets = async (rows) => {
     
     try {

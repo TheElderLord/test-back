@@ -1,68 +1,61 @@
+const connection = require('../../db/connection');
+const getBranchList = require('../branch/getBranches');
 
-const getRatingTicket = async (rows) => {
-    
+const getRatingTicket = async () => {
+  try {
+    const branches = await getBranchList();
+    const branchTicketsArray = {};
 
-    try {
-        
-       
-        const rating = {};
-
-        await Promise.all(
-           
-        rows.map(async (row) => {
-           
-            const rate = row.rating;
-
-           
-
-            try {
-                if (!rating["perfect"]) {
-                    rating["perfect"] = [];
-                }
-                if (!rating["good"]) {
-                    rating["good"] = [];
-                }
-                if (!rating["satisfactory"]) {
-                    rating["satisfactory"] = [];
-                }
-                if (!rating["bad"]) {
-                    rating["bad"] = [];
-                }
-                if (!rating["empty"]) {
-                    rating["empty"] = [];
-                }
-                const rateNum = rate * 1;
-                switch (rateNum) {
-                    case 5: rating["perfect"].push(row); break;
-                    case 4: rating["good"].push(row); break;
-                    case 3: rating["satisfactory"].push(row); break;
-                    case 2: rating["bad"].push(row); break;
-                    case 1: rating["bad"].push(row); break;
-                    default: rating["empty"].push(row); break;
-                }
-
-            } catch (err) {
-                console.log(err);
-            }
-        })
-        );
-
-        const rateJson = {
-            totalLength: Object.values(rating).reduce((acc, rating) => acc + rating.length, 0),
-            data: Object.keys(rating).map((ratingName) => ({
-                ratingName: ratingName,
-                count: rating[ratingName].length,
-                // rows: alarm[alarmName],
-            })),
+    for (const branch of branches) {
+        if (!branchTicketsArray[branch.F_NAME]) {
+            branchTicketsArray[branch.F_NAME] = {
+                PERFECT: 0,
+                BAD: 0,
+            };
         }
 
-        return rateJson;
-    } catch (err) {
-        console.error(err);
-       
+        const childIds = branch.children.map((child) => child.F_ID).join(",");
+        const sql = `SELECT rating FROM facts WHERE idbranch IN (${childIds})`;
+        const response = await query(sql);
+
+        response.forEach((rating) => {
+            if (rating.rating === '5') {
+                branchTicketsArray[branch.F_NAME].PERFECT++;
+            } else if (rating.rating === '2' || rating.rating === '1') {
+                branchTicketsArray[branch.F_NAME].BAD++;
+            }
+        });
     }
+
+    const resultObject = Object.keys(branchTicketsArray).map((branchName) => {
+        return {
+            name: branchName,
+            tickets: {
+                PERFECT: branchTicketsArray[branchName].PERFECT,
+                BAD: branchTicketsArray[branchName].BAD,
+            },
+        };
+    });
+
+   return resultObject;
+
+  } catch (err) {
+    console.error(err);
+    throw err; // Propagate the error
+  }
 };
 
+// Helper function for querying the database with Promises
+function query(sql, values) {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
 module.exports = getRatingTicket;
-
-
