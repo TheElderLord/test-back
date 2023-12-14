@@ -1,5 +1,10 @@
 const connection = require('../../db/connection');
 
+
+
+
+
+
 const deleteUser = async (userId) => {
     const user = await query('DELETE FROM users WHERE id = ?',[userId]);
     return user;
