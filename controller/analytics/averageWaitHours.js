@@ -5,7 +5,7 @@ const averageWaitHours = async (tickets) => {
         const start = ticket.starttime * 1;
         const date = new Date(start);
         const hour = date.getHours();
-        const minutes = date.getMinutes();
+        const minute = date.getMinutes();
 
         const state = ticket.state;
 

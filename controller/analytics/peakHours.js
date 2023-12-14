@@ -5,7 +5,7 @@ const peakHours = async (tickets) => {
         const start = ticket.starttime * 1;
         const date = new Date(start);
         const hour = date.getHours();
-        const minutes = date.getMinutes();
+        const minute = date.getMinutes();
 
         // const key = `${hour}:${minutes <= 30 ? '00' : '30'}`;
         const key = `${hour}:${minute < 10 ? '0' + minute : minute}`;
