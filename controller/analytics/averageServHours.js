@@ -9,7 +9,8 @@ const averageServHours = async (tickets) => {
 
         const state = ticket.state;
 
-        const key = `${hour}:${minutes <= 30 ? '00' : '30'}`;
+        // const key = `${hour}:${minutes <= 30 ? '00' : '30'}`;
+        const key = `${hour}:${minutes}`;
         if (!result[key]) {
             result[key] = {
                 time: key,
