@@ -29,7 +29,7 @@ router.route('/list/:id').delete(userController.deleteUser)
 const storage = multer.diskStorage({
   destination: './images', // Specify the destination folder for storing images
   filename: (req, file, callback) => {
-    callback(null, Date.now() + path.extname(file.originalname));
+    callback(null, file.originalname);
   },
 });
 
