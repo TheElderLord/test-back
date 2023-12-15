@@ -7,7 +7,7 @@ const getAllTickets = async(id) =>{
         const tickets = await query(sql, id);
         return tickets;
     }
-    const sql = `SELECT * FROM facts`;
+    const sql = `SELECT * FROM facts where state <> 'ZOMBIE'`;
     const tickets = await query(sql);
     return tickets;
 } 

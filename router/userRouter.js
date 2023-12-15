@@ -3,6 +3,8 @@ const userController = require('../controller/users/userController');
 const multer = require('multer');
 const path = require('path');
 
+const connection = require('../db/connection')
+
 
 const router = express.Router();
 
@@ -22,23 +24,20 @@ router.route('/list/:id').delete(userController.deleteUser)
 
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../../images'));
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname);
-    }
+  destination: './images', // Specify the destination folder for storing images
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
-const upload = multer({
-    storage
-});
+const upload = multer({ storage: storage });
+
 
 router.post('/upload', upload.single('image'),async (req, res) => {
-  const imagePath = req.files.originalname;
-  
+  const imagePath = req.file.originalname;
+  const id = req.query.id;
   // Insert the image path into the MySQL table
-  const insertQuery = `Update users set image = ${imagePath} where login = kgd`;
+  const insertQuery = `Update users set image = '${imagePath}' where id = ${id}`;
   connection.query(insertQuery, (error) => {
     if (error) {
       console.error(error);
