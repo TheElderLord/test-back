@@ -3,7 +3,7 @@ const getUsers = require('./getUsers');
 const getLastUsers = require('./getLastUser');
 const {getMessages,postMessage} = require('./getMessages')
 const {deleteUser,updateUser} = require('./userCRUD');
-
+const connection = require('../../db/connection')
 
 
 exports.getUsers = async (req,res) => {
@@ -83,6 +83,19 @@ exports.updateUser = async(req,res)=>{
             }
         })
     }
+
+}
+
+exports.makeSeen  = async(req,res)=>{
+    const {messageId,userId} = req.body;
+    
+    const sql = `Update messages set seen = '1' where id = '${messageId}' and user_id = '${userId}'`;
+    connection.query(sql,(err,result)=>{
+        if(err){
+            res.status(500).json({message:'Internal Server Error'})
+        }
+        res.status(201).json({message:"Success"})
+    })
 
 }
 

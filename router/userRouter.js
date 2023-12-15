@@ -15,7 +15,10 @@ router.route('/last').get((req, res) => {
     userController.getLastUsers(req, res);
 });
 router.route('/messages').get(userController.getMessages).
-post(userController.postMessage);
+post(userController.postMessage).
+patch(userController.makeSeen);
+
+
 
 router.route('/list/:id').delete(userController.deleteUser)
 .put(userController.updateUser);

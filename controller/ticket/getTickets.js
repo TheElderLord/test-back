@@ -3,7 +3,7 @@ const connection = require('../../db/connection');
 
 const getAllTickets = async(id) =>{
     if(id){
-        const sql = `SELECT * FROM facts WHERE idbranch = ?`;
+        const sql = `SELECT * FROM facts WHERE idbranch = ? and state <> 'ZOMBIE'`;
         const tickets = await query(sql, id);
         return tickets;
     }
