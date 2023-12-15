@@ -31,6 +31,7 @@ exports.login = async (req, res) => {
         user: {
           id: user[0].id,
           username: user[0].login,
+          image:user[0].image
         },
        });
     } else {

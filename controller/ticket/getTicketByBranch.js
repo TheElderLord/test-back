@@ -30,7 +30,7 @@ const getBranchTickets = async () => {
               ALARM: [],
             };
 
-            const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId} where state <> 'ZOMBIE' and state <> 'MISSED'`);
+            const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId} and state <> 'ZOMBIE' and state <> 'MISSED'`);
             rows.forEach((row) => {
               const { state,servover,waitover,rating } = row;
               if(!childTickets[state]){
@@ -47,7 +47,7 @@ const getBranchTickets = async () => {
           })
         );
 
-        const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")}) where state <> 'ZOMBIE' and state <> 'MISSED'`);
+        const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")}) and state <> 'ZOMBIE' and state <> 'MISSED'`);
         try{
         rows.forEach((row) => {
           const { state,waitover,servover,rating } = row;
