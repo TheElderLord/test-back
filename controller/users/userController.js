@@ -1,84 +1,93 @@
 
 const getUsers = require('./getUsers');
 const getLastUsers = require('./getLastUser');
-const {getMessages,postMessage} = require('./getMessages')
-const {deleteUser,updateUser} = require('./userCRUD');
+const { getMessages, postMessage } = require('./getMessages')
+const { deleteUser, updateUser } = require('./userCRUD');
 const connection = require('../../db/connection')
+const seen = require('./seen-message')
 
-
-exports.getUsers = async (req,res) => {
+exports.getUsers = async (req, res) => {
     const users = await getUsers();
     res.status(200).json({
-        message:'Success',
-        data:{
+        message: 'Success',
+        data: {
             users
         }
     });
 }
-exports.getLastUsers = async (req,res) => {
+exports.getLastUsers = async (req, res) => {
     const users = await getLastUsers();
     res.status(200).json({
-        message:'Success',
-        data:{
+        message: 'Success',
+        data: {
             users
         }
     });
 }
-exports.getMessages = async(req,res)=>{
+exports.getMessages = async (req, res) => {
+    if (req.query.id) {
+        const message = await getMessages(req.query.id);
+        return res.status(200).json({
+            message: 'Success',
+            data: {
+                message
+            }
+        })
+    }
     const message = await getMessages();
     res.status(200).json({
-        message:'Success',
-        data:{
+        message: 'Success',
+        data: {
             message
         }
     })
 }
 
-exports.postMessage = async(req,res)=>{
-    const message = await postMessage(req,res);
+exports.postMessage = async (req, res) => {
+    const message = await postMessage(req, res);
     res.status(200).json({
-        message:'Success',
-        data:{
+        message: 'Success',
+        data: {
             message
         }
     })
 }
 
-exports.deleteUser = async(req,res)=>{
+exports.deleteUser = async (req, res) => {
     const userId = req.params.id;
     const user = await deleteUser(userId);
-    if(user){
+    if (user) {
         res.status(200).json({
-            message:'Success',
-            data:{
+            message: 'Success',
+            data: {
                 user
             }
         })
     }
-    else{
+    else {
         res.status(404).json({
-            message:'Not found',
-          
+            message: 'Not found',
+
         })
     }
 }
 
-exports.updateUser = async(req,res)=>{
+exports.updateUser = async (req, res) => {
     const id = req.params.id;
     const body = req.body;
-    const user = await updateUser(id,body);
-    if(user){
+    const user = await updateUser(id, body);
+    if (user) {
         res.status(200).json({
-            message:'Success',
-            data:{
+            message: 'Success',
+            data: {
                 user
             }
         })
     }
-    else{
+    else {
         res.status(404).json({
-            message:'Not found',
-            data:{
+            message: 'Not found',
+            data: {
                 user
             }
         })
@@ -86,21 +95,27 @@ exports.updateUser = async(req,res)=>{
 
 }
 
-exports.makeSeen  = async(req,res)=>{
-    const {messageId,userId} = req.body;
+exports.makeSeen = async (req, res) => {
+    const { messageId, userId } = req.body;
+    // console.log(req.body)
+    const result = await seen(messageId,userId);
     
-    const sql = `Update messages set seen = '1' where id = '${messageId}' and user_id = '${userId}'`;
-    connection.query(sql,(err,result)=>{
-        if(err){
-            res.status(500).json({message:'Internal Server Error'})
-        }
-        res.status(201).json({message:"Success"})
-    })
+    if(result){
+        res.status(201).json({
+            message:'Success'
+        })
+    }
+    else {
+        res.status(500).json({
+            message:'Internal Server Error'
+        })
+    }
+
 
 }
 
 
-    
+
 
 
 
