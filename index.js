@@ -26,6 +26,7 @@ const websock = require('./websocket/webController');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
+const path = require("path")
 
 
 
@@ -42,6 +43,8 @@ app.use('/api/v1/windows', windowRouter);
 app.use('/api/v1/roles', roleRouter);
 app.use('/api/v1/analytics', analyticsRouter);
 app.use('/api/v1/auth', authRouter);
+
+app.use('/images',express.static(path.join("images")))
 
 websock(io);
 
