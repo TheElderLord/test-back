@@ -5,13 +5,13 @@ const findTimeDifference = async (rows) => {
         try {
             const startTime = row.startTime;
             const timestamp = startTime*1; // Replace this with your timestamp in milliseconds
-            console.log(timestamp);
+            // console.log(timestamp);
             if(timestamp === 0){
                 row.timeDifference = 0;
                 return;
             }
             const date = new Date(timestamp);
-            console.log(date)
+            // console.log(date)
             const now = new Date();
 
             if (isNaN(date.getTime())) {

@@ -32,8 +32,9 @@ const wssSend = async () => {
 }
 
 const getTickets = async (req, res) => {
+    const login = req.query.login;
 
-    const tickets = await alltickets();
+    const tickets = await alltickets(login);
     const alarm = await getAlarmTickets(tickets);
     const rating = await getRatingTicket(tickets);
     const states = await getStatesTickets(tickets);
