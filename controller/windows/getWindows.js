@@ -1,20 +1,10 @@
-const connection = require("../../db/connection");
-
-function query(sql, values) {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, values, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
-}
+const query = require("../../db/connection");
 
 const getWindows = async (id) => {
   try {
-    const rows = await query("SELECT * FROM window_state where idbranch = ?", [id]);
+    const rows = await query("SELECT * FROM window_state where idbranch = ?", [
+      id,
+    ]);
     return rows;
   } catch (err) {
     console.error(err);
@@ -22,4 +12,4 @@ const getWindows = async (id) => {
   }
 };
 
-module.exports = {getWindows,query};
+module.exports = { getWindows, query };

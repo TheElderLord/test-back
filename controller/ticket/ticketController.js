@@ -1,97 +1,92 @@
+const alltickets = require("./getTickets");
+const getAlarmTickets = require("./getAlarmTicket");
+const getRatingTicket = require("./getRatingTicket");
+const getStatesTickets = require("./getTicketByState");
+const getServiceTicket = require("./getServiceTicket");
+const getBranchTickets = require("./getTicketByBranch");
 
-const alltickets = require('./getTickets');
-const getAlarmTickets = require('./getAlarmTicket');
-const getRatingTicket = require('./getRatingTicket');
-const getStatesTickets = require('./getTicketByState');
-const getServiceTicket = require('./getServiceTicket');
-const getBranchTickets = require('./getTicketByBranch');
-
-
-const wssSend = async () => {
-
-    const tickets = await alltickets();
-    const alarm = await getAlarmTickets(tickets);
-    const rating = await getRatingTicket(tickets);
-    const states = await getStatesTickets(tickets);
-    const service = await getServiceTicket(tickets);
-    const branch = await getBranchTickets(tickets);
-    // console.log(branch);
-    const data = {
-        message: 'Success',
-        count: tickets.length,
-        data: {
-            alarm: alarm,
-            serviceTickets: service,
-            states: states,
-            rating: rating,
-            branchTickets: branch,
-        },
-    };
-    return data;
-
-}
+const wssSend = async (login) => {
+  const tickets = await alltickets(login);
+  const alarm = await getAlarmTickets(tickets);
+  const rating = await getRatingTicket(tickets);
+  const states = await getStatesTickets(tickets);
+  const service = await getServiceTicket(tickets);
+  const branch = await getBranchTickets(tickets);
+  // console.log(branch);
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data: {
+      alarm: alarm,
+      serviceTickets: service,
+      states: states,
+      rating: rating,
+      branchTickets: branch,
+    },
+  };
+  return data;
+};
 
 const getTickets = async (req, res) => {
-    const login = req.query.login;
+  const username = req.user;
 
-    const tickets = await alltickets(login);
-    const alarm = await getAlarmTickets(tickets);
-    const rating = await getRatingTicket(tickets);
-    const states = await getStatesTickets(tickets);
-    const service = await getServiceTicket(tickets);
-    const branch = await getBranchTickets(tickets);
-    // console.log(branch);
-    const data = {
-        message: 'Success',
-        count: tickets.length,
-        data: {
-            alarm: alarm,
-            serviceTickets: service,
-            states: states,
-            rating: rating,
-            branchTickets: branch,
-        },
-    };
-    res.status(200).json(data);
+  // console.log("Ticket controller", req.headers.bearer, req.headers.login)
+  const tickets = await alltickets(username);
+  const alarm = await getAlarmTickets(tickets);
+  const rating = await getRatingTicket(username);
+  const states = await getStatesTickets(tickets);
+  const service = await getServiceTicket(tickets);
+  const branch = await getBranchTickets(username);
+  // console.log(branch);
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data: {
+      alarm: alarm,
+      serviceTickets: service,
+      states: states,
+      rating: rating,
+      branchTickets: branch,
+    },
+  };
+  res.status(200).json(data);
+};
+// const getTicketsByBranchId = async (req, res) => {
+//     const id = req.params.id;
+//     const tickets = await alltickets(id);
+//     const alarm = await getAlarmTickets(tickets);
+//     const rating = await getRatingTicket(tickets);
+//     const states = await getStatesTickets(tickets);
+//     const service = await getServiceTicket(tickets);
+//     const data = {
+//         message: 'Success',
+//         count: tickets.length,
+//         data: {
+//             alarm: alarm,
+//             serviceTickets: service,
+//             states: states,
+//             rating: rating,
+//         },
+//     };
+//     res.status(200).json(data);
 
-}
-const getTicketsByBranchId = async (req, res) => {
-    const id = req.params.id;
-    const tickets = await alltickets(id);
-    const alarm = await getAlarmTickets(tickets);
-    const rating = await getRatingTicket(tickets);
-    const states = await getStatesTickets(tickets);
-    const service = await getServiceTicket(tickets);
-    const data = {
-        message: 'Success',
-        count: tickets.length,
-        data: {
-            alarm: alarm,
-            serviceTickets: service,
-            states: states,
-            rating: rating,
-        },
-    };
-    res.status(200).json(data);
-
-}
+// }
 const getTicketList = async (req, res) => {
-    const tickets = await alltickets();
-    const data = {
-        message: 'Success',
-        count: tickets.length,
-        data: {
-            tickets: tickets,
-        },
-    };
-    res.status(200).json(data);
-}
+  const username = req.user;
+  const tickets = await alltickets(username);
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data: {
+      tickets: tickets,
+    },
+  };
+  res.status(200).json(data);
+};
 
-module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
-
+module.exports = { getTickets, wssSend, getTicketList };
 
 // exports.getTickets = async (req, res) => {
-    
 
 //     try {
 //         const rows = await query('SELECT * FROM facts');
@@ -103,7 +98,7 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //         const rating = {};
 
 //         await Promise.all(
-           
+
 //         rows.map(async (row) => {
 //             const servover = row.servover;
 //             const waitover = row.waitover;
@@ -138,7 +133,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                     case 1: rating["bad"].push(row); break;
 //                     default: rating["empty"].push(row); break;
 //                 }
-
 
 //                 //Alarms beginning:
 //                 if (!alarm["servover"]) {
@@ -188,7 +182,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //         })
 //         );
 
-
 //         const serviceJson = {
 //             totalLength: Object.values(serviceTickets).reduce((acc, service) => acc + service.length, 0),
 //             data: Object.keys(serviceTickets).map((serviceName) => ({
@@ -198,10 +191,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //             })),
 //         };
 
-
-
-
-
 //         const branchArray = Object.keys(branchTicketsArray).map(async (branchId) => {
 //             const branchNameResult = await query('SELECT F_NAME FROM branches WHERE F_ID = ?', [branchId]);
 //             const branchName = branchNameResult[0].F_NAME;
@@ -210,7 +199,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //             //     const {  idbranch, servicename, servover, waitover, rating } = ticket;
 
 //             // });
-
 
 //             let servObject = {};
 //             let stateObject = {};
@@ -233,7 +221,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                     alarmObject.push(ticket);
 //                 }
 
-
 //                 stateObject[stateName].push(ticket);
 //                 servObject[serviceName].push(ticket);
 
@@ -247,8 +234,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                 stateName: stateName,
 //                 count: stateObject[stateName].length,
 //             }));
-
-
 
 //             return {
 //                 // totalLength: totalLength,
@@ -283,8 +268,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //             })),
 //         }
 
-
-
 //         const stateJson = {
 //             totalLength: Object.values(states).reduce((acc, state) => acc + state.length, 0),
 //             data: Object.keys(states).map((stateName) => ({
@@ -293,7 +276,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                 // rows: states[stateName],
 //             })),
 //         };
-
 
 //         const branchTickets = await Promise.all(branchArray);
 
@@ -381,7 +363,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                 })
 //             );
 
-
 //             const serviceJson = {
 //                 totalLength: Object.values(serviceTickets).reduce((acc, service) => acc + service.length, 0),
 //                 data: Object.keys(serviceTickets).map((serviceName) => ({
@@ -390,10 +371,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                     // rows: serviceTickets[serviceName],
 //                 })),
 //             };
-
-
-
-
 
 //             const branchArray = Object.keys(branchTicketsArray).map(async (branchId) => {
 //                 const branchNameResult = await query('SELECT F_NAME FROM branches WHERE F_ID = ?', [branchId]);
@@ -424,8 +401,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 
 //             }
 
-
-
 //             const stateJson = {
 //                 totalLength: Object.values(states).reduce((acc, state) => acc + state.length, 0),
 //                 data: Object.keys(states).map((stateName) => ({
@@ -434,7 +409,6 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //                     // rows: states[stateName],
 //                 })),
 //             };
-
 
 //             // const branchTickets = await Promise.all(branchArray);
 
@@ -458,4 +432,3 @@ module.exports = { getTickets, getTicketsByBranchId, wssSend,getTicketList };
 //         }
 //     }
 // };
-

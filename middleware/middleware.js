@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken');
 
-const { secret } = require('../constants/constant')
+const { secret } = require('../constants/constant');
+
 
 const secretKey = secret;
 
 
 const checkTokenMiddleware = (req, res, next) => {
     const token = req.headers.bearer;
-
+    // console.log(req.path)
+    // console.log(req.headers.bearer);
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized: Token is missing' });
     }
@@ -18,7 +20,8 @@ const checkTokenMiddleware = (req, res, next) => {
         }
 
         // Token is valid, you can access decoded data in your routes
-        req.user = decoded;
+        req.user = decoded.username;
+        req.id = decoded.userId;
         next();
     });
 };

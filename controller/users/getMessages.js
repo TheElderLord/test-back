@@ -1,7 +1,4 @@
-
-
-
-const connection = require('../../db/connection');
+const query = require("../../db/connection");
 const getMessages = async (id) => {
   let userLogin;
 
@@ -17,7 +14,7 @@ const getMessages = async (id) => {
 
   if (id) {
     const formattedMessages = messages.map((message) => {
-      const seenMess = message.mseen.split(',');
+      const seenMess = message.mseen.split(",");
 
       // Check if the user has seen the message
       const isSeen = seenMess.includes(userLogin);
@@ -25,7 +22,7 @@ const getMessages = async (id) => {
       // Create a new JSON object with the 'seen' status
       return {
         message_id: message.message_id,
-        user_id:message.user_id,
+        user_id: message.user_id,
         mseen: isSeen ? 1 : 0,
         user_login: message.user_login,
         created_at: message.created_at,
@@ -43,26 +40,16 @@ const getMessages = async (id) => {
 const postMessage = async (req, res) => {
   try {
     const { user_id, txt } = req.body;
-    console.log('post triggered')
-    const message = await query(`INSERT INTO messages (user_id, txt) VALUES (${user_id}, '${txt}')`);
+    console.log("post triggered");
+    const message = await query(
+      `INSERT INTO messages (user_id, txt) VALUES (${user_id}, '${txt}')`
+    );
     return message;
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
-}
+};
 
 
 
-function query(sql, values) {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, values, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
-}
-
-module.exports = { getMessages, postMessage }
+module.exports = { getMessages, postMessage };

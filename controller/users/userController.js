@@ -2,9 +2,20 @@
 const getUsers = require('./getUsers');
 const getLastUsers = require('./getLastUser');
 const { getMessages, postMessage } = require('./getMessages')
-const { deleteUser, updateUser } = require('./userCRUD');
+const { deleteUser, updateUser,getUser } = require('./userCRUD');
 const connection = require('../../db/connection')
 const seen = require('./seen-message')
+
+
+exports.getUs= async(req,res)=>{
+    // const user = req.user;
+    const id = req.id;
+    const user = await getUser(id);
+    res.status(200).json({
+        message: 'Success',
+        user
+    });
+}
 
 exports.getUsers = async (req, res) => {
     const users = await getUsers();
@@ -25,8 +36,9 @@ exports.getLastUsers = async (req, res) => {
     });
 }
 exports.getMessages = async (req, res) => {
-    if (req.query.id) {
-        const message = await getMessages(req.query.id);
+    const id = req.id;
+    if (id) {
+        const message = await getMessages(id);
         return res.status(200).json({
             message: 'Success',
             data: {
@@ -96,9 +108,10 @@ exports.updateUser = async (req, res) => {
 }
 
 exports.makeSeen = async (req, res) => {
-    const { messageId, userId } = req.body;
+    const { messageId } = req.body;
+    const username = req.user;
     // console.log(req.body)
-    const result = await seen(messageId,userId);
+    const result = await seen(messageId,username);
     
     if(result){
         res.status(201).json({

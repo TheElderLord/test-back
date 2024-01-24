@@ -27,24 +27,26 @@ const pool = mysql.createPool({
 // Get a connection from the pool
 pool.getConnection((err, connection) => {
   if (err) {
-    console.error('Error connecting to database:', err);
-    return;
+    console.error('Error connecting to MySQL database:', err);
+  } else {
+    console.log('Connected to MySQL database!');
+    connection.release();
   }
-
-  console.log('Connected to database!');
-
-  // Perform database operations here
-
-  // Release the connection back to the pool
-  connection.release();
 });
 
-// Close the connection pool when the application exits
-process.on('SIGINT', () => {
-  pool.end();
-  process.exit();
-});
+function query(sql, values) {
+  return new Promise((resolve, reject) => {
+    pool.query(sql, values, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
-module.exports = pool;
 
+
+module.exports = query;
 

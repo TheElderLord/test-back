@@ -1,9 +1,9 @@
-const connection = require('../../db/connection');
-const getBranchList = require('../branch/getBranches');
+const query = require("../../db/connection");
+const getBranchList = require("../branch/getBranches");
 
-const getBranchTickets = async () => {
+const getBranchTickets = async (login) => {
   try {
-    const branches = await getBranchList();
+    const branches = await getBranchList(login);
     const branchTicketsArray = {};
 
     await Promise.all(
@@ -30,15 +30,22 @@ const getBranchTickets = async () => {
               ALARM: [],
             };
 
-            const rows = await query(`SELECT * FROM facts WHERE idbranch = ${childId} and state <> 'ZOMBIE' and state <> 'MISSED'`);
+            const rows = await query(
+              `SELECT * FROM facts WHERE idbranch = ${childId} and state <> 'ZOMBIE' and state <> 'MISSED'`
+            );
             rows.forEach((row) => {
-              const { state,servover,waitover,rating } = row;
-              if(!childTickets[state]){
+              const { state, servover, waitover, rating } = row;
+              if (!childTickets[state]) {
                 childTickets[state] = [];
               }
               // console.log(typeof childTickets[state]);
               childTickets[state].push(row);
-              if(servover == "true" || waitover == "true" || rating == "1" || rating == "2"){
+              if (
+                servover == "true" ||
+                waitover == "true" ||
+                rating == "1" ||
+                rating == "2"
+              ) {
                 childTickets.ALARM.push(row);
               }
             });
@@ -47,20 +54,29 @@ const getBranchTickets = async () => {
           })
         );
 
-        const rows = await query(`SELECT * FROM facts WHERE idbranch IN (${children.map((child) => child.F_ID).join(",")}) and state <> 'ZOMBIE' and state <> 'MISSED'`);
-        try{
-        rows.forEach((row) => {
-          const { state,waitover,servover,rating } = row;
-          if(!branchTickets[state]){
-            branchTickets[state] = [];
-          }
-          branchTickets[state].push(row);
-          if(servover == "true" || waitover == "true" || rating == "1" || rating == "2")
-          branchTickets.ALARM.push(row);
-        });
-      }catch(err){
-        console.log(err)
-      }
+        const rows = await query(
+          `SELECT * FROM facts WHERE idbranch IN (${children
+            .map((child) => child.F_ID)
+            .join(",")}) and state <> 'ZOMBIE' and state <> 'MISSED'`
+        );
+        try {
+          rows.forEach((row) => {
+            const { state, waitover, servover, rating } = row;
+            if (!branchTickets[state]) {
+              branchTickets[state] = [];
+            }
+            branchTickets[state].push(row);
+            if (
+              servover == "true" ||
+              waitover == "true" ||
+              rating == "1" ||
+              rating == "2"
+            )
+              branchTickets.ALARM.push(row);
+          });
+        } catch (err) {
+          console.log(err);
+        }
 
         branchTicketsArray[branchName] = branchTickets;
       })
@@ -109,18 +125,5 @@ const getBranchTickets = async () => {
     throw err; // Propagate the error
   }
 };
-
-// Helper function for querying the database with Promises
-function query(sql, values) {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, values, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
-}
 
 module.exports = getBranchTickets;

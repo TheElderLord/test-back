@@ -1,4 +1,4 @@
-const {getWindows} = require("./getWindows");
+const { getWindows } = require("./getWindows");
 const sortWindows = require("./sortWindows");
 
 exports.getWindowsById = async (req, res) => {
@@ -6,7 +6,10 @@ exports.getWindowsById = async (req, res) => {
     const { id } = req.params;
     const windows = await getWindows(id);
     // console.log(windows);
-    const {windowsJson,newtickets,servTickets} = await sortWindows(id,windows);
+    const { windowsJson, newtickets, servTickets } = await sortWindows(
+      id,
+      windows
+    );
     // console.log(sortedWindows);
     const data = {
       message: "Success",
@@ -21,4 +24,4 @@ exports.getWindowsById = async (req, res) => {
     console.error("Error fetching windows:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};

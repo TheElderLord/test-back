@@ -1,21 +1,20 @@
-const getBranchList = require('./getBranches');
+const getBranchList = require("./getBranches");
 
 exports.getBranch = async (req, res) => {
   try {
-    const rootBranches = await getBranchList();
+    const login = req.user;
+    // console.log("Branches",req)
+    const rootBranches = await getBranchList(login);
     // console.log('rootBranches', rootBranches);
     const data = {
-      message: 'Success',
+      message: "Success",
       size: rootBranches.length,
-      rows: rootBranches
-    }
+      rows: rootBranches,
+    };
 
     res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching branches:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching branches:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
-

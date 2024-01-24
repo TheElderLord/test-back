@@ -23,6 +23,8 @@ patch(userController.makeSeen);
 router.route('/list/:id').delete(userController.deleteUser)
 .put(userController.updateUser);
 
+router.get('/get-info',userController.getUs);
+
 
 
 

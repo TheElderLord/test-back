@@ -1,9 +1,14 @@
-const connection = require('../../db/connection');
+const query = require('../../db/connection');
 
 
 
 
 
+const getUser= async(id)=>{
+ 
+  const user = await query('Select * FROM users WHERE id = ?',[id]);
+  return user;
+}
 
 const deleteUser = async (userId) => {
     const user = await query('DELETE FROM users WHERE id = ?',[userId]);
@@ -16,16 +21,6 @@ const updateUser = async (id,body)=>{
 }
 
 
-function query(sql, values) {
-    return new Promise((resolve, reject) => {
-      connection.query(sql, values, (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
-  }
 
-module.exports = {deleteUser,updateUser};
+
+module.exports = {deleteUser,updateUser,getUser};

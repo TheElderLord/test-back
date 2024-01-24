@@ -1,121 +1,116 @@
 const connection = require("../../db/connection");
-const { query } = require('./getWindows');
-
+const { query } = require("./getWindows");
 
 const sortWindows = async (branchId, windows) => {
-    try {
-        const ticketsToWindows = {};
-        let newtickets = [];
-        let servTickets = 0;
-        // console.log('Windows:', windows);
-        const newResponse = await query(`SELECT *  FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`);
-        if(newResponse.length == 1){
-            newtickets.push(newResponse[0]);
-        }
-        else {
-            newResponse.forEach((newResponse)=>{
-                newtickets.push(newResponse);
-            })
-        }
-        // console.log(`SELECT COUNT(*) as count FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`)
-     
-        servTickets = await query(`SELECT COUNT(*) as count FROM facts WHERE state = 'INSERVICE' AND idbranch = ${branchId}`);
-        servTickets = servTickets[0].count;
-        for (const key in windows) {
-            const window = windows[key];
-            // console.log('Window:', window);
-            // console.log('Operator'+window.idoperator);
-            const active = window.idoperator * 1 == 0 ? false : true;
-            // console.log(active);
-            const opId = window.idoperator;
-            const worktitle = window.worktitle;
-
-            if (!ticketsToWindows[window.winno]) {
-                ticketsToWindows[window.winno] = {};
-            }
-
-
-            if (!ticketsToWindows[window.winno].INSERVICE) {
-                ticketsToWindows[window.winno].INSERVICE = [];
-            }
-            if (!ticketsToWindows[window.winno].DELAYED) {
-                ticketsToWindows[window.winno].DELAYED = [];
-            }
-
-            ticketsToWindows[window.winno].active = active;
-            ticketsToWindows[window.winno].worktitle = worktitle;
-            ticketsToWindows[window.winno].operatorId = opId;
-
-            if (!active) {
-                continue;
-            }
-
-           
-
-            const name = await query(`SELECT f_name FROM employee_list WHERE F_ID = ${opId}`);
-            ticketsToWindows[window.winno].name = name[0].f_name;
-
-
-            // const sql = `SELECT * FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state <> 'COMPLETED'`;
-            // const factRows = await query(sql);
-            const insSql = `SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'INSERVICE'`;
-            const inservCount = await query(insSql);
-            // console.log(insSql)
-            const delayedCount = await query(`SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'DELAYED'`);
-            // console.log(delayedCount);
-            if(inservCount.length == 1){
-                ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
-            }
-            else{
-                inservCount.forEach((inservCount)=>{
-                    ticketsToWindows[window.winno].INSERVICE.push(inservCount);
-                })
-            }
-            if(delayedCount.length == 1){
-                ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
-            }
-            else{
-                delayedCount.forEach((delayedCount)=>{
-                    ticketsToWindows[window.winno].DELAYED.push(delayedCount);
-                })
-            }
-            // ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
-            // ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
-
-
-        }
-
-        const windowsJson = Object.keys(ticketsToWindows).map((key) => {
-            const winInfo = ticketsToWindows[key];
-
-            return {
-                winno: key,
-                operatorId: winInfo.operatorId,
-                active: winInfo.active,
-                worktitle: winInfo.worktitle,
-                name: winInfo.name,
-                INSERVICE: winInfo.INSERVICE,
-                DELAYED: winInfo.DELAYED,
-                // ticketTotal: (winInfo.INSERVICE || 0) + (winInfo.DELAYED || 0),
-            };
-        });
-        // if(!windowsJson.serving){
-        //     windowsJson.serving = 0;
-        // }
-        // if(!windowsJson.delayed){
-        //     windowsJson.delayed = 0;
-        // }
-        // windowsJson.serving = servTickets;
-        // windowsJson.delayed = newtickets;
-        
-        return {windowsJson,newtickets,servTickets};
-
-    } catch (error) {
-        console.log(error);
+  try {
+    const ticketsToWindows = {};
+    let newtickets = [];
+    let servTickets = 0;
+    // console.log('Windows:', windows);
+    const newResponse = await query(
+      `SELECT *  FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`
+    );
+    if (newResponse.length == 1) {
+      newtickets.push(newResponse[0]);
+    } else {
+      newResponse.forEach((newResponse) => {
+        newtickets.push(newResponse);
+      });
     }
+    // console.log(`SELECT COUNT(*) as count FROM facts WHERE state = 'NEW' AND idbranch = ${branchId}`)
+
+    servTickets = await query(
+      `SELECT COUNT(*) as count FROM facts WHERE state = 'INSERVICE' AND idbranch = ${branchId}`
+    );
+    servTickets = servTickets[0].count;
+    for (const key in windows) {
+      const window = windows[key];
+      // console.log('Window:', window);
+      // console.log('Operator'+window.idoperator);
+      const active = window.idoperator * 1 == 0 ? false : true;
+      // console.log(active);
+      const opId = window.idoperator;
+      const worktitle = window.worktitle;
+
+      if (!ticketsToWindows[window.winno]) {
+        ticketsToWindows[window.winno] = {};
+      }
+
+      if (!ticketsToWindows[window.winno].INSERVICE) {
+        ticketsToWindows[window.winno].INSERVICE = [];
+      }
+      if (!ticketsToWindows[window.winno].DELAYED) {
+        ticketsToWindows[window.winno].DELAYED = [];
+      }
+
+      ticketsToWindows[window.winno].active = active;
+      ticketsToWindows[window.winno].worktitle = worktitle;
+      ticketsToWindows[window.winno].operatorId = opId;
+
+      if (!active) {
+        continue;
+      }
+
+      const name = await query(
+        `SELECT f_name FROM employee_list WHERE F_ID = ${opId}`
+      );
+      ticketsToWindows[window.winno].name = name[0].f_name;
+
+      // const sql = `SELECT * FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state <> 'COMPLETED'`;
+      // const factRows = await query(sql);
+      const insSql = `SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'INSERVICE'`;
+      const inservCount = await query(insSql);
+      // console.log(insSql)
+      const delayedCount = await query(
+        `SELECT *  FROM facts WHERE windownum = ${window.winno} and idbranch = ${branchId} and state = 'DELAYED'`
+      );
+      // console.log(delayedCount);
+      if (inservCount.length == 1) {
+        ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
+      } else {
+        inservCount.forEach((inservCount) => {
+          ticketsToWindows[window.winno].INSERVICE.push(inservCount);
+        });
+      }
+      if (delayedCount.length == 1) {
+        ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
+      } else {
+        delayedCount.forEach((delayedCount) => {
+          ticketsToWindows[window.winno].DELAYED.push(delayedCount);
+        });
+      }
+      // ticketsToWindows[window.winno].INSERVICE.push(inservCount[0]);
+      // ticketsToWindows[window.winno].DELAYED.push(delayedCount[0]);
+    }
+
+    const windowsJson = Object.keys(ticketsToWindows).map((key) => {
+      const winInfo = ticketsToWindows[key];
+
+      return {
+        winno: key,
+        operatorId: winInfo.operatorId,
+        active: winInfo.active,
+        worktitle: winInfo.worktitle,
+        name: winInfo.name,
+        INSERVICE: winInfo.INSERVICE,
+        DELAYED: winInfo.DELAYED,
+        // ticketTotal: (winInfo.INSERVICE || 0) + (winInfo.DELAYED || 0),
+      };
+    });
+    // if(!windowsJson.serving){
+    //     windowsJson.serving = 0;
+    // }
+    // if(!windowsJson.delayed){
+    //     windowsJson.delayed = 0;
+    // }
+    // windowsJson.serving = servTickets;
+    // windowsJson.delayed = newtickets;
+
+    return { windowsJson, newtickets, servTickets };
+  } catch (error) {
+    console.log(error);
+  }
 };
-
-
 
 // function query(sql, values) {
 //     return new Promise((resolve, reject) => {
@@ -175,7 +170,6 @@ const sortWindows = async (branchId, windows) => {
 //           // console.log(op_name);
 //           ticketsToWindows[row.winno].name = op_name[0].f_name;
 
-
 //           const sql = `SELECT * FROM facts WHERE windownum = ${row.winno} and idbranch = ${branchId} and state <> 'COMPLETED'`;
 //           // console.log('Facts request:' + sql);
 
@@ -199,7 +193,6 @@ const sortWindows = async (branchId, windows) => {
 //             if (!ticketsToWindows[row.winno].DELAYED) {
 //               ticketsToWindows[row.winno].DELAYED = [];
 //             }
-
 
 //             if (factRows.length == 1) {
 //               if (factRows[0].state == "INSERVICE") {
