@@ -3,7 +3,7 @@ const getUsers = require('./getUsers');
 const getLastUsers = require('./getLastUser');
 const { getMessages, postMessage } = require('./getMessages')
 const { deleteUser, updateUser,getUser } = require('./userCRUD');
-const connection = require('../../db/connection')
+
 const seen = require('./seen-message')
 
 

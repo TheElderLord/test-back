@@ -24,7 +24,7 @@ const websock = require("./websocket/webController");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+// const io = socketIO(server);
 const path = require("path");
 
 app.use(cors());
