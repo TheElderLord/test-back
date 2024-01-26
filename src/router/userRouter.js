@@ -14,9 +14,6 @@ router.route('/').get((req, res) => {
 router.route('/last').get((req, res) => {
     userController.getLastUsers(req, res);
 });
-router.route('/messages').get(userController.getMessages).
-post(userController.postMessage).
-patch(userController.makeSeen);
 
 
 
@@ -38,20 +35,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-router.post('/upload', upload.single('image'),async (req, res) => {
+router.post("/upload", upload.single("image"), async (req, res) => {
   const imagePath = req.file.originalname;
   const id = req.query.id;
   // Insert the image path into the MySQL table
   const insertQuery = `Update users set image = '${imagePath}' where id = ${id}`;
-  connection.query(insertQuery, (error) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.status(201).send('Image uploaded successfully.');
-    }
-  });
-   
+  try {
+    const result = await query(insertQuery);
+    console.log(result);
+    res.status(201).json({
+      message: "success",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500);
+  }
 });
 
 module.exports = router;

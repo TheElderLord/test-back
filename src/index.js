@@ -17,6 +17,7 @@ const windowRouter = require("./router/windowRouter");
 const roleRouter = require("./router/roleRouter");
 const analyticsRouter = require("./router/analyticsRouter");
 const authRouter = require("./router/authRouter");
+const messageRouter = require("./router/messageRouter");
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
@@ -30,11 +31,13 @@ const path = require("path");
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
+
 app.use("/images", express.static(path.join("images")));
 app.use(checkTokenMiddleware);
 app.use("/api/v1/tickets", router);
 app.use("/api/v1/branches", branchRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/employees", employeeRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/windows", windowRouter);

@@ -1,4 +1,4 @@
-const { getMessages } = require("../controller/users/getMessages");
+const { getMessages } = require("../../controller/users/getMessages");
 
 module.exports = async (io) => {
   const chatModule = io.of('/chat');

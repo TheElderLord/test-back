@@ -38,6 +38,7 @@ exports.login = async (req, res) => {
       res.json({
         message: "Authentication successful!",
         token,
+        // login:user[0].login,
         // user: {
         //     id: user[0].id,
         //     username: user[0].login,
@@ -53,10 +54,17 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  const token = req.header("Authorization");
+  const token = req.headers.bearer;
   //Destroy the token
-  jwt.destroy(token);
-  res.json({ message: "Logout successful!" });
+
+  try {
+    jwt.destroy(token);
+    console.log("destroyed");
+
+    res.json({ message: "Logout successful!" });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 function authenticateToken(req, res, next) {

@@ -1,18 +1,14 @@
 const query = require("../../db/connection");
-const getMessages = async (id) => {
-  let userLogin;
 
-  if (id) {
-    userLogin = (await query(`SELECT * FROM users WHERE id = ${id}`))[0].login;
-  }
-
+const getMessages = async (userLogin) => {
   const sql = `SELECT messages.id as message_id, users.id as user_id, messages.seen as mseen, users.login as user_login, created_at, updated_at, messages.txt as message_txt
     FROM messages
     JOIN users ON messages.user_id = users.id;`;
 
-  const messages = await query(sql);
+  try {
+    const messages = await query(sql);
 
-  if (id) {
+    // if (id) {
     const formattedMessages = messages.map((message) => {
       const seenMess = message.mseen.split(",");
 
@@ -32,24 +28,12 @@ const getMessages = async (id) => {
     });
 
     return formattedMessages;
-  }
-
-  return messages;
-};
-
-const postMessage = async (req, res) => {
-  try {
-    const { user_id, txt } = req.body;
-    console.log("post triggered");
-    const message = await query(
-      `INSERT INTO messages (user_id, txt) VALUES (${user_id}, '${txt}')`
-    );
-    return message;
   } catch (err) {
     console.log(err);
   }
+  // }
+
+  // return messages;
 };
 
-
-
-module.exports = { getMessages, postMessage };
+module.exports = getMessages;
