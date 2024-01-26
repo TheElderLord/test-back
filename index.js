@@ -20,7 +20,7 @@ const authRouter = require("./router/authRouter");
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
-const websock = require("./websocket/webController");
+// const websock = require("./websocket/webController");
 
 const app = express();
 const server = http.createServer(app);

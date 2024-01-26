@@ -5,27 +5,28 @@ const getStatesTickets = require("./getTicketByState");
 const getServiceTicket = require("./getServiceTicket");
 const getBranchTickets = require("./getTicketByBranch");
 
-const wssSend = async (login) => {
-  const tickets = await alltickets(login);
-  const alarm = await getAlarmTickets(tickets);
-  const rating = await getRatingTicket(tickets);
-  const states = await getStatesTickets(tickets);
-  const service = await getServiceTicket(tickets);
-  const branch = await getBranchTickets(tickets);
-  // console.log(branch);
-  const data = {
-    message: "Success",
-    count: tickets.length,
-    data: {
-      alarm: alarm,
-      serviceTickets: service,
-      states: states,
-      rating: rating,
-      branchTickets: branch,
-    },
-  };
-  return data;
-};
+// const wssSend = async () => {
+//   const login = req.user;
+//   const tickets = await alltickets(login);
+//   const alarm = await getAlarmTickets(tickets);
+//   const rating = await getRatingTicket(tickets);
+//   const states = await getStatesTickets(tickets);
+//   const service = await getServiceTicket(tickets);
+//   const branch = await getBranchTickets(tickets);
+//   // console.log(branch);
+//   const data = {
+//     message: "Success",
+//     count: tickets.length,
+//     data: {
+//       alarm: alarm,
+//       serviceTickets: service,
+//       states: states,
+//       rating: rating,
+//       branchTickets: branch,
+//     },
+//   };
+//   return data;
+// };
 
 const getTickets = async (req, res) => {
   const username = req.user;
@@ -84,7 +85,7 @@ const getTicketList = async (req, res) => {
   res.status(200).json(data);
 };
 
-module.exports = { getTickets, wssSend, getTicketList };
+module.exports = { getTickets,  getTicketList };
 
 // exports.getTickets = async (req, res) => {
 
