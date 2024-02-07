@@ -40,7 +40,7 @@ const getRatingTicket = async (login) => {
     return resultObject;
   } catch (err) {
     console.error(err);
-    throw err; // Propagate the error
+    // throw err; // Propagate the error
   }
 };
 

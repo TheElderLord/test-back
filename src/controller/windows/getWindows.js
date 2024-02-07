@@ -8,7 +8,7 @@ const getWindows = async (id) => {
     return rows;
   } catch (err) {
     console.error(err);
-    throw err; // Propagate the error
+    // throw err; // Propagate the error
   }
 };
 

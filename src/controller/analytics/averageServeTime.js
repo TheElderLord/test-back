@@ -26,7 +26,8 @@ const getAverageServeTime = async (facts) => {
         if (state === "INSERVICE") {
           const end = new Date();
           const diff = end - start;
-          const diffInMinutes = diff / 60000;
+          // const diffInMinutes = diff / 60000;
+          const diffInMinutes = diff / 1000;
 
           serve += diffInMinutes;
           ticketCount++;
@@ -45,7 +46,8 @@ const getAverageServeTime = async (facts) => {
         } else if (state === "COMPLETED") {
           const end = row.stopservtime * 1;
           const diff = end - start;
-          const diffInMinutes = diff / 60000;
+          // const diffInMinutes = diff / 60000;
+          const diffInMinutes = diff / 1000;
 
           serve += diffInMinutes;
           ticketCount++;

@@ -66,7 +66,7 @@ const getBranchList = async (login) => {
     }
   } catch (error) {
     console.error("Error in getBranchList:", error);
-    throw error;
+    // throw error;
   }
 };
 

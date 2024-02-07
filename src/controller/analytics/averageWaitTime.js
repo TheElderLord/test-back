@@ -25,7 +25,8 @@ const getAverageWaitTime = async (facts) => {
         if (state === "NEW") {
           const end = new Date();
           const diff = end - start;
-          const diffInMinutes = diff / 60000;
+          // const diffInMinutes = diff / 60000;
+          const diffInMinutes = diff / 1000;
 
           wait += diffInMinutes;
           ticketCount++;
@@ -44,7 +45,8 @@ const getAverageWaitTime = async (facts) => {
         } else if (state === "INSERVICE" || state === "COMPLETED") {
           const end = row.startservtime * 1;
           const diff = end - start;
-          const diffInMinutes = diff / 60000;
+          // const diffInMinutes = diff / 60000;
+          const diffInMinutes = diff / 1000;
 
           wait += diffInMinutes;
           ticketCount++;

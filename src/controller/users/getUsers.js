@@ -5,8 +5,16 @@ const getUsers = async (login) => {
       const users = await query("SELECT * FROM users");
       return users;
     } else {
-      const users = await query(`SELECT * FROM users where login = '${login}'`);
-      return users;
+      const branches = `Select id_branch from users where login = ?`;
+      const userBranches = await query(branches, login);
+      if (userBranches) {
+        console.log(userBranches);
+        const users = await query(
+          `SELECT * FROM users where id_branch in (${userBranches[0].id_branch})`
+        );
+        return users;
+      }
+      return;
     }
   } catch (err) {
     console.log(err);

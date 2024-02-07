@@ -122,7 +122,7 @@ const getBranchTickets = async (login) => {
     return branchObject;
   } catch (err) {
     console.error(err);
-    throw err; // Propagate the error
+    // throw err; // Propagate the error
   }
 };
 

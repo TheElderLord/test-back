@@ -10,7 +10,8 @@ const getEmployees = async (branchId) => {
     // console.log(rows);
     return rows;
   } catch (err) {
-    throw err;
+    console.log(err);
+    // throw err;
   }
 };
 
