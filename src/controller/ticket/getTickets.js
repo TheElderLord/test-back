@@ -31,7 +31,7 @@ const getAllTickets = async (login) => {
 
       const sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
-      )}) AND state <> 'ZOMBIE' AND state <> 'MISSED'`;
+      )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT'`;
 
       const tickets = await query(sql);
       return tickets;
