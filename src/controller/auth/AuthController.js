@@ -67,19 +67,21 @@ exports.logout = async (req, res) => {
   }
 };
 
-function authenticateToken(req, res, next) {
-  const token = req.header("Authorization");
+exports.auth= async (req, res, next)=> {
+  const token = req.headers.bearer;
 
   if (!token) {
-    return res.sendStatus(401);
-  }
+    return res.status(401).json({ message: 'Unauthorized: Token is missing' });
+}
 
-  jwt.verify(token, secretKey, (err, user) => {
+jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-      return res.sendStatus(403);
+        return res.status(401).json({ message: 'Unauthorized: Invalid token' });
     }
 
-    req.user = user;
-    next();
-  });
+    // Token is valid, you can access decoded data in your routes
+    const username = decoded.username;
+    
+    return res.status(200).json({username });
+});
 }

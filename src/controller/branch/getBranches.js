@@ -30,16 +30,19 @@ const getBranchList = async (login) => {
       });
 
       return rootBranches;
-    } else {
+    } else if(login) {
       const sqlSelectIdBranch = `SELECT id_branch FROM users WHERE login = '${login}'`;
       const rows = await query(sqlSelectIdBranch);
       const branches = rows[0].id_branch;
+      // console.log("Sql select",branches)
 
       const sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches WHERE F_ID IN (${branches})`;
       const branchesResult = await query(sql);
+      // console.log("branchesResult",branchesResult)
 
       const rootSql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches WHERE F_ID = ${branchesResult[0].F_PARENT_ID}`;
       const rootBranch = await query(rootSql);
+      // console.log("Rootbranches",rootBranch)
 
       branchesResult.push(rootBranch[0]);
 

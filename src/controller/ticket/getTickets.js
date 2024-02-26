@@ -2,7 +2,7 @@ const { error } = require("console");
 const query = require("../../db/connection");
 
 const getAllTickets = async (login) => {
-  console.log("get tickets", login);
+  // console.log("get tickets", login);
 
   if (login === "admin" || login === "kgd") {
     const sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
