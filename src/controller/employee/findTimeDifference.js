@@ -16,9 +16,9 @@ const findTimeDifference = async (rows) => {
         console.error("Invalid date");
       } else {
         const timeDifference = now - date;
-        const hoursDifference = timeDifference / (1000 * 60 * 60);
-        const formattedDate = Math.round(hoursDifference * 100) / 100;
-        row.timeDifference = formattedDate; // Convert milliseconds to hours
+        // const hoursDifference = timeDifference / (1000 * 60 * 60);
+        // const formattedDate = Math.round(hoursDifference * 100) / 100;
+        row.timeDifference = timeDifference; // Convert milliseconds to hours
         // console.log(`Difference in hours: ${hoursDifference}`);
       }
 
