@@ -44,7 +44,14 @@ app.use("/api/v1/windows", windowRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/analytics", analyticsRouter);
 
+const createUser = require("./controller/users/createUser");
 
+// (async () => {
+//   // Inside this IIFE, you can use await
+//   await createUser("admin");
+
+  
+// })();
 
 // websock(io);
 
