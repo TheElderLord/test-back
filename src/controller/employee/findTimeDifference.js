@@ -15,7 +15,8 @@ const findTimeDifference = async (rows) => {
       if (isNaN(date.getTime())) {
         console.error("Invalid date");
       } else {
-        const timeDifference = now - date;
+        let timeDifference = (now - date)/1000*60;
+        
         // const hoursDifference = timeDifference / (1000 * 60 * 60);
         // const formattedDate = Math.round(hoursDifference * 100) / 100;
         row.timeDifference = timeDifference; // Convert milliseconds to hours

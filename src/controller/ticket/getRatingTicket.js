@@ -11,6 +11,7 @@ const getRatingTicket = async (login) => {
         branchTicketsArray[branch.F_NAME] = {
           PERFECT: 0,
           BAD: 0,
+          TOTAL:0
         };
       }
 
@@ -19,11 +20,13 @@ const getRatingTicket = async (login) => {
       const response = await query(sql);
 
       response.forEach((rating) => {
+        
         if (rating.rating === "5") {
           branchTicketsArray[branch.F_NAME].PERFECT++;
         } else if (rating.rating === "2" || rating.rating === "1") {
           branchTicketsArray[branch.F_NAME].BAD++;
         }
+        branchTicketsArray[branch.F_NAME].TOTAL++;
       });
     }
 
@@ -33,6 +36,7 @@ const getRatingTicket = async (login) => {
         tickets: {
           PERFECT: branchTicketsArray[branchName].PERFECT,
           BAD: branchTicketsArray[branchName].BAD,
+          TOTAL: branchTicketsArray[branchName].TOTAL,
         },
       };
     });

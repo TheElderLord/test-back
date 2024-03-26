@@ -8,7 +8,7 @@ const getBranchTickets = async (login) => {
 
     await Promise.all(
       branches.map(async (branch) => {
-        const { F_ID: branchId, F_NAME: branchName, children } = branch;
+        const { F_ID: branchId, F_NAME: branchName, children, ONN: branchOnline } = branch;
         const branchTickets = {
           INSERVICE: [],
           NEW: [],
@@ -16,11 +16,13 @@ const getBranchTickets = async (login) => {
           COMPLETED: [],
           DELAYED: [],
           ALARM: [],
+          online: branchOnline,
+          branchId // Including branchId in branchTickets
         };
 
         await Promise.all(
           children.map(async (child) => {
-            const { F_ID: childId, F_NAME: childName } = child;
+            const { F_ID: childId, F_NAME: childName, ONN: childOnline } = child;
             const childTickets = {
               INSERVICE: [],
               NEW: [],
@@ -28,6 +30,8 @@ const getBranchTickets = async (login) => {
               COMPLETED: [],
               DELAYED: [],
               ALARM: [],
+              online: childOnline,
+              branchId // Including branchId in childTickets
             };
 
             const rows = await query(
@@ -38,7 +42,6 @@ const getBranchTickets = async (login) => {
               if (!childTickets[state]) {
                 childTickets[state] = [];
               }
-              // console.log(typeof childTickets[state]);
               childTickets[state].push(row);
               if (
                 servover == "true" ||
@@ -82,18 +85,18 @@ const getBranchTickets = async (login) => {
       })
     );
 
-    // console.log(branchTicketsArray);
-
     const branchObject = branches.map((branch) => {
-      const { F_NAME: branchName, children } = branch;
+      const { F_NAME: branchName, F_ID: branchId, children, ONN: branchOnline } = branch; // Including branchId here
       const branchTickets = branchTicketsArray[branchName];
 
       const childObjects = children.map((child) => {
-        const { F_NAME: childName } = child;
+        const { F_NAME: childName, F_ID: childId, ONN: childOnline } = child; // Including childId here
         const childTickets = branchTickets[childName];
 
         return {
           branchName: childName,
+          branchId: childId, // Including childId in childObjects
+          online: childOnline,
           stateTickets: {
             INSERVICE: childTickets.INSERVICE.length,
             NEW: childTickets.NEW.length,
@@ -107,6 +110,8 @@ const getBranchTickets = async (login) => {
 
       return {
         branchName,
+        branchId, // Including branchId here
+        online: branchOnline,
         stateTickets: {
           INSERVICE: branchTickets.INSERVICE.length,
           NEW: branchTickets.NEW.length,

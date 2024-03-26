@@ -1,11 +1,20 @@
 const { error } = require("console");
 const query = require("../../db/connection");
 
-const getAllTickets = async (login) => {
+const getAllTickets = async ( login,branch_id) => {
   // console.log("get tickets", login);
-
+ 
   if (login === "admin" || login === "kgd") {
-    const sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
+    let sql;
+    if (branch_id) {
+      const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
+      const childBranches = await query(childSql);
+      // console.log(childBranches);
+      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
+        .map((child) => child.F_ID)
+        .join(",")})`;
+    }
+    else sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
 
     const tickets = await query(sql);
     // console.log(tickets)

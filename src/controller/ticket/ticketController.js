@@ -4,6 +4,7 @@ const getRatingTicket = require("./getRatingTicket");
 const getStatesTickets = require("./getTicketByState");
 const getServiceTicket = require("./getServiceTicket");
 const getBranchTickets = require("./getTicketByBranch");
+const getMapInfo = require("./getMapInfo");
 
 // const wssSend = async () => {
 //   const login = req.user;
@@ -28,7 +29,7 @@ const getBranchTickets = require("./getTicketByBranch");
 //   return data;
 // };
 
-const getTickets = async (req, res) => {
+exports.getTickets = async (req, res) => {
   const username = req.user;
 
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
@@ -52,6 +53,35 @@ const getTickets = async (req, res) => {
   };
   res.status(200).json(data);
 };
+exports.branchTickets = async (req, res) => {
+  const username = req.user;
+
+  // console.log("Ticket controller", req.headers.bearer, req.headers.login)
+  const tickets = await alltickets(username);
+  const branch = await getBranchTickets(username);
+  // console.log(branch);
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data: branch,
+  };
+  res.status(200).json(data);
+};
+exports.getServiceTickets = async (req, res) => {
+  const username = req.user;
+
+  // console.log("Ticket controller", req.headers.bearer, req.headers.login)
+  const tickets = await alltickets(username);
+  
+  const service = await getServiceTicket(tickets);
+  
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data:service,
+  };
+  res.status(200).json(data);
+};
 // const getTicketsByBranchId = async (req, res) => {
 //     const id = req.params.id;
 //     const tickets = await alltickets(id);
@@ -72,7 +102,7 @@ const getTickets = async (req, res) => {
 //     res.status(200).json(data);
 
 // }
-const getTicketList = async (req, res) => {
+exports.getTicketList = async (req, res) => {
   const username = req.user;
   const tickets = await alltickets(username);
   const data = {
@@ -84,8 +114,33 @@ const getTicketList = async (req, res) => {
   };
   res.status(200).json(data);
 };
+exports.getBranchList = async (req, res) => {
+  const username = req.user;
+  const branch_id = req.params.id;
+  const tickets = await alltickets(username,branch_id);
+  const data = {
+    message: "Success",
+    count: tickets.length,
+    data: {
+      tickets: tickets,
+    },
+  };
+  res.status(200).json(data);
+};
 
-module.exports = { getTickets,  getTicketList };
+
+exports.getMapInfo = async(req,res)=>{
+  const username = req.user;
+  const branch_id = req.params.id;
+  const info = await getMapInfo(username,branch_id);
+  const data = {
+    message: "Success",
+    
+    data: info,
+  };
+  res.status(200).json(data);
+}
+// module.exports = { getTickets,  getTicketList };
 
 // exports.getTickets = async (req, res) => {
 
