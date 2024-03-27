@@ -55,10 +55,10 @@ exports.getTickets = async (req, res) => {
 };
 exports.branchTickets = async (req, res) => {
   const username = req.user;
-
+  const branch_id = req.params.id;
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
-  const tickets = await alltickets(username);
-  const branch = await getBranchTickets(username);
+  const tickets = await alltickets(username,branch_id);
+  const branch = await getBranchTickets(username,branch_id);
   // console.log(branch);
   const data = {
     message: "Success",

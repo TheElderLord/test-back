@@ -22,6 +22,7 @@ router.route('/').get((req, res) => {
    ticketController.getTickets(req, res);
 });
 router.get('/branch-tickets',ticketController.branchTickets);
+router.get('/branch-tickets/:id',ticketController.branchTickets);
 
 router.get("/service-tickets",ticketController.getServiceTickets);
 

@@ -1,9 +1,9 @@
 const query = require("../../db/connection");
 const getBranchList = require("../branch/getBranches");
 
-const getBranchTickets = async (login) => {
+const getBranchTickets = async (login,branch_id) => {
   try {
-    const branches = await getBranchList(login);
+    const branches = await getBranchList(login,branch_id);
     const branchTicketsArray = {};
 
     await Promise.all(
