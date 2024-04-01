@@ -18,6 +18,8 @@ const roleRouter = require("./router/roleRouter");
 const analyticsRouter = require("./router/analyticsRouter");
 const authRouter = require("./router/authRouter");
 const messageRouter = require("./router/messageRouter");
+const branchListRouter = require('./router/branchListRouter')
+
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
@@ -43,6 +45,7 @@ app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/windows", windowRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/analytics", analyticsRouter);
+app.use("/api/v1/branch-list", branchListRouter);
 
 const createUser = require("./controller/users/createUser");
 

@@ -7,7 +7,8 @@ exports.post = async (req, res) => {
     const login = req.user;
     const { txt } = req.body;
     const id = req.id;
-    console.log(login,id)
+    console.log(txt);
+    // console.log(login,id)
     const message = await postMessage(login, txt,id);
     res.status(200).json({
       message: "Success",
