@@ -31,7 +31,8 @@ router.get("/service-tickets",ticketController.getServiceTickets);
 //     getTicketsByBranchId(req, res);
 // });
 router.get('/list', ticketController.getTicketList);
-router.get('/list/:id', ticketController.getBranchList);
+router.get('/list/:id', ticketController.getTicketList);
+
 router.get('/map', ticketController.getMapInfo);
 router.get('/map/:id', ticketController.getMapInfo);
 

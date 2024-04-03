@@ -1,6 +1,8 @@
 const query = require("../../db/connection");
 const { secret } = require("../../constants/constant");
 
+const nomadDb = require("../../db/nomadConnection");
+
 const moment = require("moment");
 
 const jwt = require("jsonwebtoken");
@@ -52,6 +54,39 @@ exports.login = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.nomadLogin = async(req,res)=>{
+  const { username, password } = req.body;
+
+  
+  try {
+    const user = await nomadDb(
+      "SELECT * FROM t_g_user WHERE F_LOGIN = ? AND F_PASSWORD = ?",
+      [username, password]
+    );
+
+    if (user && user.length > 0) {
+      
+
+      const token = jwt.sign(
+        { userId: user[0].F_ID, username: "admin", branch:username.substring(0,4) },
+        secretKey,
+        { expiresIn: "24h" }
+      );
+
+      res.json({
+        message: "Authentication successful!",
+        token,
+        // login:user[0].login,
+       
+      });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 exports.logout = async (req, res) => {
   const token = req.headers.bearer;

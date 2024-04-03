@@ -6,6 +6,7 @@ module.exports = {
     dbuser: process.env.MYSQL_USER,
     dbpassword: process.env.MYSQL_PASS,
     dbname: process.env.MYSQL_DB,
+    dbNomad:process.env.MYSQL_NOMAD,
     dbport: process.env.MYSQL_PORT,
 
     port: process.env.PORT,

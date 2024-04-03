@@ -22,6 +22,8 @@ const checkTokenMiddleware = (req, res, next) => {
         // Token is valid, you can access decoded data in your routes
         req.user = decoded.username;
         req.id = decoded.userId;
+        if(decoded.branch)
+        console.log(decoded.branch)
         
         next();
     });

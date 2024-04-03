@@ -5,6 +5,7 @@ const getStatesTickets = require("./getTicketByState");
 const getServiceTicket = require("./getServiceTicket");
 const getBranchTickets = require("./getTicketByBranch");
 const getMapInfo = require("./getMapInfo");
+const getList = require('./getTicketList')
 
 // const wssSend = async () => {
 //   const login = req.user;
@@ -104,10 +105,15 @@ exports.getServiceTickets = async (req, res) => {
 // }
 exports.getTicketList = async (req, res) => {
   const username = req.user;
-  const tickets = await alltickets(username);
+  const branch_id = req.params.id;
+  const page = parseInt(req.query.page) || 1; // Current page number
+  const limit = parseInt(req.query.limit) || 25; // Number of items per page
+
+  const {tickets,pagesCount} = await getList(username,page,limit,branch_id);
   const data = {
     message: "Success",
     count: tickets.length,
+    pages: pagesCount,
     data: {
       tickets: tickets,
     },
