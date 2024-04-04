@@ -1,13 +1,18 @@
 const query = require("../../db/connection");
 
-const getBranchList = async (login) => {
+const getBranchList = async (login,type) => {
   try {
     // console.log("Branches login",login)
     const branchMap = {};
     const rootBranches = [];
 
     if (login === "admin" || login === "kgd") {
-      const sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches`;
+      let sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches`;
+      if(type){
+        if(type === "online") sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches where ONN = 1`;
+        else if(type === "offline") sql =`SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches where ONN=0`;
+      }
+      console.log(sql);
       const branches = await query(sql);
 
       // Create a map for quick access using F_ID

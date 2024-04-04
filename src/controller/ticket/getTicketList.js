@@ -1,36 +1,26 @@
 const query = require("../../db/connection");
 
-const getTicketList = async (login, page, limit, branch_id) => {
+const getTicketList = async (login, page, limit, filter, branch_id) => {
   // console.log("get tickets", login);
   const offset = (page - 1) * limit;
   let pagesCount = 0;
+  let sql;
+  
   if (login === "admin" || login === "kgd") {
-    let sql;
     if (branch_id) {
       const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
+
       const childBranches = await query(childSql);
-    //   console.log(childBranches);
-      const totalQuery = await query(
-        `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
-          .map((child) => child.F_ID)
-          .join(",")})`
-      );
-      pagesCount = totalQuery.length;
+      
+      
 
       sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
         .map((child) => child.F_ID)
-        .join(",")}) LIMIT ${limit} OFFSET ${offset}`;
+        .join(",")}) `;
     } else {
-      const totalQuery = await query(
-        `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`
-      );
-      pagesCount = totalQuery.length;
-      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' LIMIT ${limit} OFFSET ${offset}`;
+      
+      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' `;
     }
-    const tickets = await query(sql);
-    // console.log(tickets)
-    pagesCount = Math.round(pagesCount / limit);
-    return { tickets, pagesCount };
   } else {
     try {
       const user_branches = await query(
@@ -41,30 +31,40 @@ const getTicketList = async (login, page, limit, branch_id) => {
         return;
       }
       const branchIds = user_branches[0].id_branch.split(",");
-      console.log(branchIds);
+      // console.log(branchIds);
 
       // if (branchIds.length === 0) {
       //     // Handle the case when there are no branches
       //     return [];
       // }
 
-      const sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
+      sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
-      )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT' LIMIT ${limit} OFFSET ${offset}`;
-      const totalQuery = await query(
-        `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
-          ","
-        )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT'`
-      );
-
-      pagesCount = totalQuery.length;
-      const tickets = await query(sql);
-      pagesCount = Math.round(pagesCount / limit);
-      return { tickets, pagesCount };
+      )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT' `;
+    
     } catch (err) {
       console.log(err);
     }
   }
+  if (filter) {
+    if (filter === "bad") {
+      sql += ` and rating = 1 OR rating = 2`;
+    } else if (filter === "wait") {
+      sql += ` and waitover = 'true'`;
+    } else if (filter === "serv") {
+      sql += ` and servover = 'true'`;
+    }
+  }
+  const totalSql = sql.replace("*","count(*)");
+  sql += ` LIMIT ${limit} OFFSET ${offset}`;
+  // console.log(totalSql)
+  const tickets = await query(sql);
+  const totalQuery = await query(totalSql);
+  // console.log(totalQuery)
+  pagesCount = totalQuery[0]["count(*)"];
+  // console.log(tickets)
+  pagesCount = Math.ceil(pagesCount / limit);
+  return { tickets, pagesCount };
 };
 
 module.exports = getTicketList;

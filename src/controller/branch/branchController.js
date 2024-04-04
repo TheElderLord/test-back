@@ -3,8 +3,13 @@ const getBranchList = require("./getBranches");
 exports.getBranches = async (req, res) => {
   try {
     const login = req.user;
+    const type = req.query.type;
+    
     // console.log("Branches",req)
-    const rootBranches = await getBranchList(login);
+    let rootBranches = await getBranchList(login);
+    if(type){
+      rootBranches = await getBranchList(login,type)
+    }
     // console.log('rootBranches', rootBranches);
     const data = {
       message: "Success",
