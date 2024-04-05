@@ -8,48 +8,24 @@ const getMapInfo = async (login, branch_id) => {
   try {
     let resultObject = {
       averageRate: 0,
-      onlineServers: 0,
-      total:0,
       tickets: 0,
-      offlineBranches:[]
+      server_list:[]
     }
     let online = 0;
     let totalServers = 0;
-    let tickets = await getTickets(login, branch_id);
+    let tickets = await getTickets(login);
     let branches = await getBranches(login);
-    let branch = findBranchById(branches, branch_id);
+    let branch ;
     
     if (branch_id) {
       tickets = await getTickets(login, branch_id);
       branch = findBranchById(branches, branch_id);
-      online = 0;
-      totalServers = 0;
-      branch.children.map(e => {
-        if (e.ONN === 1) {
-          online++;
-        }
-        totalServers++;
-      })
+      resultObject.server_list = branch;
     }
     else {
       tickets = await getTickets(login);
       // branch = findBranchById(branches);
-      online = 0;
-      totalServers = 0;
-      branches.map(e => {
-        e.children.map(el=>{
-          if (el.ONN === 1) {
-            online++;
-          }
-          else if(el.ONN === 0){
-            if(!resultObject.offlineBranches.includes(e))
-            resultObject.offlineBranches.push(e)
-          }
-          
-          totalServers++;
-        })
-        
-      })
+      resultObject.server_list = branches;
     }
 
 
@@ -68,8 +44,7 @@ const getMapInfo = async (login, branch_id) => {
 
     resultObject.averageRate = (((perfect * 5) + (bad * 2)) / total).toFixed(2);
     resultObject.tickets = tickets.length;
-    resultObject.onlineServers = online;
-    resultObject.total = totalServers;
+    
 
     return resultObject;
 
