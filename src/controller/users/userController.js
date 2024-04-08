@@ -71,3 +71,23 @@ exports.updateUser = async (req, res) => {
     });
   }
 };
+
+exports.getUserById = async(req,res)=>{
+  const login = req.user;
+  const user = await getUserByid(login);
+  if (user) {
+    res.status(200).json({
+      message: "Success",
+      data: {
+        user,
+      },
+    });
+  } else {
+    res.status(404).json({
+      message: "Not found",
+      data: {
+        user,
+      },
+    });
+  } 
+}

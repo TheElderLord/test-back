@@ -7,10 +7,10 @@ const getBranchList = async (login,type) => {
     const rootBranches = [];
 
     if (login === "admin" || login === "kgd") {
-      let sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches`;
+      let sql = `SELECT * FROM branches`;
       if(type){
-        if(type === "online") sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches where ONN = 1`;
-        else if(type === "offline") sql =`SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches where ONN=0`;
+        if(type === "online") sql = `SELECT * FROM branches where ONN = 1 OR F_PARENT_ID = 101`;
+        else if(type === "offline") sql =`SELECT * FROM branches where ONN=0 OR F_PARENT_ID = 101`;
       }
       console.log(sql);
       const branches = await query(sql);
@@ -41,11 +41,11 @@ const getBranchList = async (login,type) => {
       const branches = rows[0].id_branch;
       // console.log("Sql select",branches)
 
-      const sql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches WHERE F_ID IN (${branches})`;
+      const sql = `SELECT * FROM branches WHERE F_ID IN (${branches})`;
       const branchesResult = await query(sql);
       // console.log("branchesResult",branchesResult)
 
-      const rootSql = `SELECT id, F_ID, F_NAME, F_IP_ADDRESS, F_PARENT_ID, ONN FROM branches WHERE F_ID = ${branchesResult[0].F_PARENT_ID}`;
+      const rootSql = `SELECT * FROM branches WHERE F_ID = ${branchesResult[0].F_PARENT_ID}`;
       const rootBranch = await query(rootSql);
       // console.log("Rootbranches",rootBranch)
 

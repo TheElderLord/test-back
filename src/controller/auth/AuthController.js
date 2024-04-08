@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
       res.json({
         message: "Authentication successful!",
         token,
-        login:user[0].login,
+        login: user[0].login,
         // user: {
         //     id: user[0].id,
         //     username: user[0].login,
@@ -55,10 +55,9 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.nomadLogin = async(req,res)=>{
+exports.nomadLogin = async (req, res) => {
   const { username, password } = req.body;
 
-  
   try {
     const user = await nomadDb(
       "SELECT * FROM t_g_user WHERE F_LOGIN = ? AND F_PASSWORD = ?",
@@ -66,10 +65,12 @@ exports.nomadLogin = async(req,res)=>{
     );
 
     if (user && user.length > 0) {
-      
-
       const token = jwt.sign(
-        { userId: user[0].F_ID, username: "admin", branch:username.substring(0,4) },
+        {
+          userId: user[0].F_ID,
+          username: "admin",
+          branch: username.substring(0, 4),
+        },
         secretKey,
         { expiresIn: "24h" }
       );
@@ -78,7 +79,6 @@ exports.nomadLogin = async(req,res)=>{
         message: "Authentication successful!",
         token,
         // login:user[0].login,
-       
       });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
@@ -86,7 +86,7 @@ exports.nomadLogin = async(req,res)=>{
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 exports.logout = async (req, res) => {
   const token = req.headers.bearer;
@@ -102,21 +102,21 @@ exports.logout = async (req, res) => {
   }
 };
 
-exports.auth= async (req, res, next)=> {
+exports.auth = async (req, res, next) => {
   const token = req.headers.bearer;
 
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: Token is missing' });
-}
+    return res.status(401).json({ message: "Unauthorized: Token is missing" });
+  }
 
-jwt.verify(token, secretKey, (err, decoded) => {
+  jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 
     // Token is valid, you can access decoded data in your routes
     const username = decoded.username;
-    
-    return res.status(200).json({username });
-});
-}
+
+    return res.status(200).json({ username });
+  });
+};

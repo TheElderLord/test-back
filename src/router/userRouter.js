@@ -17,7 +17,8 @@ router.route('/last').get((req, res) => {
 
 
 
-router.route('/list/:id').delete(userController.deleteUser)
+router.route('/list/:id').get(userController.getUserById).
+delete(userController.deleteUser)
 .put(userController.updateUser);
 
 router.get('/get-info',userController.getUs);
