@@ -3,6 +3,9 @@ const getLastUsers = require("./getLastUser");
 
 const { deleteUser, updateUser, getUser } = require("./userCRUD");
 
+const updateInfo = require('./updateUserInfo');
+
+
 exports.getUs = async (req, res) => {
   // const user = req.user;
   const login = req.user;
@@ -72,7 +75,28 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.getUserById = async(req,res)=>{
+exports.updateUserInfo = async (req,res) => {
+  const login = req.user;
+  const body = req.body;
+  const user = await updateInfo(login, body);
+  if (user) {
+    res.status(200).json({
+      message: "Success",
+      data: {
+        user,
+      },
+    });
+  } else {
+    res.status(404).json({
+      message: "Not found",
+      data: {
+        user,
+      },
+    });
+  }
+};
+
+exports.getUserById = async (req, res) => {
   const login = req.user;
   const user = await getUserByid(login);
   if (user) {
@@ -89,5 +113,5 @@ exports.getUserById = async(req,res)=>{
         user,
       },
     });
-  } 
-}
+  }
+};

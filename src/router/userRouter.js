@@ -21,7 +21,8 @@ router.route('/list/:id').get(userController.getUserById).
 delete(userController.deleteUser)
 .put(userController.updateUser);
 
-router.get('/get-info',userController.getUs);
+router.route('/get-info').get(userController.getUs).
+put(userController.updateUserInfo)
 
 
 
@@ -37,12 +38,14 @@ const upload = multer({ storage: storage });
 
 
 router.post("/upload", upload.single("image"), async (req, res) => {
-  const imagePath = req.file.originalname;
-  const id = req.query.id;
-  // Insert the image path into the MySQL table
-  const insertQuery = `Update users set image = '${imagePath}' where id = ${id}`;
   try {
-    const result = await query(insertQuery);
+  const imagePath = req.file.originalname;
+  const login = req.query.login;
+  // Insert the image path into the MySQL table
+  const insertQuery = `Update users set image = '${imagePath}' where login = '${login}'`;
+  console.log(insertQuery);
+  
+    const result = await connection(insertQuery);
     console.log(result);
     res.status(201).json({
       message: "success",
