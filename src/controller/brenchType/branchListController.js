@@ -2,6 +2,7 @@ const getBranchtype = require("./getBranchType");
 const setBranchType = require("./setBranchType");
 const setBlock = require("./setBlock");
 const branchList = require("./getAllBranches");
+const brType = require("./getBrType");
 
 exports.getBranchList = async (req, res) => {
   const a = await getBranchtype();
@@ -51,3 +52,7 @@ exports.setBlock = async (req, res) => {
     });
   }
 };
+exports.brtype = async(req,res)=>{
+  const result = await brType();
+  res.send(result)
+}
