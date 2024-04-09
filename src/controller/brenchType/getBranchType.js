@@ -29,7 +29,7 @@ const getBranchList = async () => {
         });
 
         const branches = parsedResult['soapenv:Envelope']['soapenv:Body']['cus:NomadTerminalBranchList_Output']['Branch'];
-        console.log(JSON.stringify(branches, null, 2)); // Convert to JSON and print
+        // console.log(JSON.stringify(branches, null, 2)); // Convert to JSON and print
         return JSON.stringify(branches, null, 2);
     } catch (error) {
         console.error('Error:', error);

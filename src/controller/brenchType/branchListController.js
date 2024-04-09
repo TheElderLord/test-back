@@ -26,7 +26,14 @@ exports.getList = async (req, res) => {
 };
 
 exports.setMenu = async (req, res) => {
-  const q = await setBranchType("first", true, 1139);
+  const id = req.params.id;
+  const {menuValue} = req.body;
+  let automatic;
+  if(menuValue === "first"){
+    automatic = true
+  }
+  else automatic = false;
+  const q = await setBranchType(menuValue, automatic, id);
   res.send(q);
 };
 exports.setBlock = async (req, res) => {
