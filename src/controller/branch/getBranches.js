@@ -12,7 +12,7 @@ const getBranchList = async (login,type) => {
         if(type === "online") sql = `SELECT * FROM branches where ONN = 1 OR F_PARENT_ID = 101`;
         else if(type === "offline") sql =`SELECT * FROM branches where ONN=0 OR F_PARENT_ID = 101`;
       }
-      console.log(sql);
+      // console.log(sql);
       const branches = await query(sql);
 
       // Create a map for quick access using F_ID

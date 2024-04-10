@@ -15,4 +15,7 @@ module.exports = {
 
     secret: process.env.SECRET_KEY,
 
+    nomad_host : process.env.NOMAD_SERVER_HOST,
+    nomad_port : process.env.NOMAD_SERVER_PORT,
+
 }

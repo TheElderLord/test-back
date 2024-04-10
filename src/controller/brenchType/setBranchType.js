@@ -1,5 +1,6 @@
 const axios = require("axios");
 const xml2js = require("xml2js");
+const {nomad_host, nomad_port} = require("../../constants/constant")
 
 const parseOptions = {
   explicitArray: false, // Don't put single child elements in an array
@@ -19,7 +20,7 @@ const setMenu = async (menuType, automatic, branch_id) => {
 </soapenv:Envelope>`;
 
   try {
-    const result = await axios.post("http://10.10.111.73:3859", soapRequest);
+    const result = await axios.post(`http://${nomad_host}:${nomad_port}`, soapRequest);
     const parsedResult = await new Promise((resolve, reject) => {
       xml2js.parseString(result.data, parseOptions, (err, parsedData) => {
         if (err) {
