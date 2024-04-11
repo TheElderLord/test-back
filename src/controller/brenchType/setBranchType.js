@@ -36,7 +36,7 @@ const setMenu = async (menuType, automatic, branch_id) => {
     return JSON.stringify(branches, null, 2).trim();
   } catch (error) {
     console.error("Error:", error);
-    throw error; // Rethrow the error to handle it outside
+    // throw error; // Rethrow the error to handle it outside
   }
 };
 

@@ -37,7 +37,7 @@ const getBranchList = async () => {
     return JSON.stringify(branches, null, 2);
   } catch (error) {
     console.error("Error:", error);
-    throw error; // Rethrow the error to handle it outside
+    console.log(error); // Rethrow the error to handle it outside
   }
 };
 
