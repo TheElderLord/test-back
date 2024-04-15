@@ -103,7 +103,7 @@ exports.logout = async (req, res) => {
   }
 };
 
-exports.auth = async (req, res, next) => {
+exports.auth = async (req, res) => {
   const token = req.headers.bearer;
 
   if (!token) {
@@ -116,8 +116,10 @@ exports.auth = async (req, res, next) => {
     }
 
     // Token is valid, you can access decoded data in your routes
-    const username = decoded.username;
+    // const username = decoded.username;
 
-    return res.status(200).json({ username });
+    return res.status(200).json({
+      message:"Valid"
+    });
   });
 };

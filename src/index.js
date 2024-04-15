@@ -18,8 +18,8 @@ const roleRouter = require("./router/roleRouter");
 const analyticsRouter = require("./router/analyticsRouter");
 const authRouter = require("./router/authRouter");
 const messageRouter = require("./router/messageRouter");
-const branchListRouter = require('./router/branchListRouter')
-const boardRouter = require('./router/boardRouter')
+const branchListRouter = require("./router/branchListRouter");
+const boardRouter = require("./router/boardRouter");
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
@@ -49,15 +49,40 @@ app.use("/api/v1/branch-list", branchListRouter);
 app.use("/api/v1/board", boardRouter);
 
 const createUser = require("./controller/users/createUser");
+const truncation = require("./db/truncation");
 
 // (async () => {
 //   // Inside this IIFE, you can use await
 //   await createUser("admin");
 
-  
 // })();
 
 // websock(io);
+
+function startMainAtCustomTime() {
+  const restartTime = process.env.RESTART_TIME || "09:00"; // Default restart time is 09:00
+  const [hours, minutes] = restartTime.split(":").map(Number);
+  const now = new Date();
+  let restartDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes,
+    0,
+    0
+  );
+  if (restartDate <= now) {
+    restartDate.setDate(restartDate.getDate() + 1); // If restart time has already passed for today, schedule it for tomorrow
+  }
+  const millisecondsUntilRestart = restartDate - now;
+  setTimeout(async () => {
+    await truncation();
+    setInterval(truncation, 24 * 60 * 60 * 1000);
+  }, millisecondsUntilRestart);
+}
+
+startMainAtCustomTime();
 
 const port = constants.port;
 const host = constants.host;
