@@ -35,5 +35,6 @@ router.get('/list/:id', ticketController.getTicketList);
 
 router.get('/map', ticketController.getMapInfo);
 router.get('/map/:id', ticketController.getMapInfo);
+router.get('/download',ticketController.downloadTickets)
 
 module.exports = { router , wss};

@@ -5,7 +5,8 @@ const getStatesTickets = require("./getTicketByState");
 const getServiceTicket = require("./getServiceTicket");
 const getBranchTickets = require("./getTicketByBranch");
 const getMapInfo = require("./getMapInfo");
-const getList = require('./getTicketList')
+const getList = require('./getTicketList');
+const download = require('./download');
 
 // const wssSend = async () => {
 //   const login = req.user;
@@ -68,6 +69,7 @@ exports.branchTickets = async (req, res) => {
   };
   res.status(200).json(data);
 };
+
 exports.getServiceTickets = async (req, res) => {
   const username = req.user;
 
@@ -146,6 +148,21 @@ exports.getMapInfo = async(req,res)=>{
     data: info,
   };
   res.status(200).json(data);
+}
+
+exports.downloadTickets = async(req,res)=>{
+  const buffer = await download();
+  if(buffer){
+    res.set(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.set("Content-Disposition", "attachment; filename=generated_data.xlsx");
+    res.send(buffer);
+    return;
+  }
+  res.status(500).send("Error downloading Excel");
+  
 }
 // module.exports = { getTickets,  getTicketList };
 
