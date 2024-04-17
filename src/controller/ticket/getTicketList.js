@@ -5,21 +5,26 @@ const getTicketList = async (login, page, limit, filter, branch_id) => {
   const offset = (page - 1) * limit;
   let pagesCount = 0;
   let sql;
-  
+
   if (login === "admin" || login === "kgd") {
-    if (branch_id) {
-      const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
+    try {
+      if (branch_id) {
+        const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
 
-      const childBranches = await query(childSql);
-      
-      
-
-      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
-        .map((child) => child.F_ID)
-        .join(",")}) `;
-    } else {
-      
-      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' `;
+        const childBranches = await query(childSql);
+        console.log(childBranches)
+        if (childBranches.length > 0) {
+          sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
+            .map((child) => child.F_ID)
+            .join(",")}) `;
+        } else {
+          sql = `Select * from facts where idbranch = ${branch_id} and state <> 'ZOMBIE' and state <> 'MISSED'`;
+        }
+      } else {
+        sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' `;
+      }
+    } catch (err) {
+      console.log(err);
     }
   } else {
     try {
@@ -41,7 +46,6 @@ const getTicketList = async (login, page, limit, filter, branch_id) => {
       sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
       )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT' `;
-    
     } catch (err) {
       console.log(err);
     }
@@ -55,7 +59,7 @@ const getTicketList = async (login, page, limit, filter, branch_id) => {
       sql += ` and servover = 'true'`;
     }
   }
-  const totalSql = sql.replace("*","count(*)");
+  const totalSql = sql.replace("*", "count(*)");
   sql += ` LIMIT ${limit} OFFSET ${offset}`;
   // console.log(totalSql)
   const tickets = await query(sql);

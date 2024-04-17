@@ -10,9 +10,16 @@ const getAllTickets = async ( login,branch_id) => {
       const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
       const childBranches = await query(childSql);
       // console.log(childBranches);
-      sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
-        .map((child) => child.F_ID)
-        .join(",")})`;
+      if(childBranches !== "" && childBranches !== undefined){
+        console.log("here")
+        sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
+          .map((child) => child.F_ID)
+          .join(",")})`;
+      }
+      else {
+        sql = sql = `Select * from branches where F_ID = ${branch_id}`
+      }
+     
     }
     else sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
 
@@ -37,7 +44,7 @@ const getAllTickets = async ( login,branch_id) => {
       //     // Handle the case when there are no branches
       //     return [];
       // }
-
+      console.log("there")
       const sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
       )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT'`;
