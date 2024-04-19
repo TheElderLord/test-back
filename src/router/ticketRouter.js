@@ -1,9 +1,9 @@
 const express = require('express');
 const ticketController = require('../controller/ticket/ticketController');
 
-const WebSocket = require('ws');
+// const WebSocket = require('ws');
 
-const wss = new WebSocket.Server({ port: 8080 });
+// const wss = new WebSocket.Server({ port: 8080 });
 
 
 
@@ -37,4 +37,4 @@ router.get('/map', ticketController.getMapInfo);
 router.get('/map/:id', ticketController.getMapInfo);
 router.get('/download',ticketController.downloadTickets)
 
-module.exports = { router , wss};
+module.exports = { router };

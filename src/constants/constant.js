@@ -6,8 +6,14 @@ module.exports = {
     dbuser: process.env.MYSQL_USER,
     dbpassword: process.env.MYSQL_PASS,
     dbname: process.env.MYSQL_DB,
-    dbNomad:process.env.MYSQL_NOMAD,
     dbport: process.env.MYSQL_PORT,
+
+    dbnomadHost:process.env.MYSQL_NOMAD_HOST,
+    dbnomadUser:process.env.MYSQL_NOMAD_USER,
+    dbnomadPass:process.env.MYSQL_NOMAD_PASS,
+    dbNomad:process.env.MYSQL_NOMAD_DB,
+    dbnomadPort:process.env.MYSQL_NOMAD_PORT,
+    
 
     port: process.env.PORT,
     host: process.env.HOST,

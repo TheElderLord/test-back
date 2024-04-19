@@ -1,11 +1,11 @@
 
 const constants = require('../constants/constant')
 
-const host = constants.dbhost;
-const user = constants.dbuser;
-const password = constants.dbpassword;
+const host = constants.dbnomadHost;
+const user = constants.dbnomadUser;
+const password = constants.dbnomadPass;
 const database = constants.dbNomad;
-const port = constants.dbport;
+const port = constants.dbnomadPort;
 
 
 
