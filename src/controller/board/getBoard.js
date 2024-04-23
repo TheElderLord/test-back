@@ -1,18 +1,17 @@
 const query = require("../../db/connection");
 
 const getBoardMessages = async () => {
-  // console.log(branchId);
   try {
-    const rows = await query(
-      `SELECT b.*,u.login FROM board b
-      left join users u 
-      on u.id = b.user_id;`
-    );
-    // console.log(rows);
+    const rows = await query(`
+      SELECT b.*, u.login 
+      FROM board b
+      LEFT JOIN users u ON u.id = b.user_id
+      WHERE b.valid_to > NOW(); -- Filter out expired messages
+    `);
     return rows;
   } catch (err) {
     console.log(err);
-    // throw err;
+    throw err;
   }
 };
 

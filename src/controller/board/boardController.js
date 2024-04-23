@@ -26,10 +26,11 @@ exports.getList = async(req,res)=>{
 exports.createBoard = async(req,res)=>{
     const userId = req.id;
     const {title,board_body,valid_to,role} = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     try{
     const result = await createBoard(userId,title,board_body,valid_to,role);
-    if(result){
+    // console.log("Result", result);
+    if(result !==false){
         return res.status(200).json({
             message:"Success",
             
