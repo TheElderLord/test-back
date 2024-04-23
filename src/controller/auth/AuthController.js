@@ -66,10 +66,22 @@ exports.nomadLogin = async (req, res) => {
     );
 
     if (user && user.length > 0) {
+      // console.log(user)
+      const inSc = await query(
+        "SELECT * FROM users WHERE login = ? AND password = ?",
+        [username, password]
+      );
+      if(!inSc && user.length === 0){
+        const sql = `Insert into users(login,password,role,id_branch) 
+        values(${user[0].F_LOGIN},${user[0].F_PASSWORD},3,${user[0].F_LOGIN.substring(0,4)})`;
+        await query(sql);
+       
+      }
+     
       const token = jwt.sign(
         {
           userId: user[0].F_ID,
-          username: "admin",
+          username: user[0].F_LOGIN,
           branch: username.substring(0, 4),
         },
         secretKey,
