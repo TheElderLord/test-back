@@ -18,7 +18,10 @@ const ticketController = require('../controller/ticket/ticketController');
 
 const router = express.Router();
 
-router.route('/').get((req, res) => {
+router.route('/all').get((req, res) => {
+   ticketController.getTickets(req, res);
+});
+router.route('/all/:id').get((req, res) => {
    ticketController.getTickets(req, res);
 });
 router.get('/branch-tickets',ticketController.branchTickets);

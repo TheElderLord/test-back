@@ -25,7 +25,7 @@ const getBoardMessages = async (user_id, title, body, valid_date, role) => {
     }
   } catch (err) {
     console.log(err);
-    throw err;
+    // throw err;
   }
 };
 

@@ -35,11 +35,13 @@ const getMapInfo = async (login, branch_id) => {
     tickets.map(e => {
       if (e.rating === "5") {
         perfect++;
+        total++;
       }
       else if (e.rating === "2") {
         bad++;
+        total++;
       }
-      total++;
+      
     })
 
     resultObject.averageRate = (((perfect * 5) + (bad * 2)) / total).toFixed(2);

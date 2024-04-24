@@ -71,7 +71,8 @@ exports.nomadLogin = async (req, res) => {
         "SELECT * FROM users WHERE login = ? AND password = ?",
         [username, password]
       );
-      if(!inSc && user.length === 0){
+      // console.log(inSc)
+      if(inSc.length === 0){
         const sql = `Insert into users(login,password,role,id_branch) 
         values(${user[0].F_LOGIN},${user[0].F_PASSWORD},3,${user[0].F_LOGIN.substring(0,4)})`;
         await query(sql);

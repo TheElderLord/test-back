@@ -33,9 +33,15 @@ const download = require('./download');
 
 exports.getTickets = async (req, res) => {
   const username = req.user;
+  const branch_id = req.params.id;
 
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
-  const tickets = await alltickets(username);
+  let tickets;
+  if(branch_id){
+      tickets =  await alltickets(username,branch_id);
+  }
+  else tickets =  await alltickets(username);
+  
   const alarm = await getAlarmTickets(tickets);
   const rating = await getRatingTicket(username);
   const states = await getStatesTickets(tickets);
