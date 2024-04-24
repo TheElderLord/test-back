@@ -9,7 +9,7 @@ const getAllTickets = async ( login,branch_id) => {
     if (branch_id) {
       const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
       const childBranches = await query(childSql);
-      console.log(childBranches);
+      // console.log(childBranches);
       if(childBranches.length !== 0 ){
         // console.log("here")
         sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
