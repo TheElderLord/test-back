@@ -1,7 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
+const https = require("https");
 const socketIO = require("socket.io");
+const fs = require("fs");
+const path = require("path");
 
 // const WebSocket = require('ws');
 
@@ -25,10 +28,19 @@ const checkTokenMiddleware = require("./middleware/middleware");
 
 // const websock = require("./websocket/webController");
 
+
+
+const options = {
+  key: fs.readFileSync(path.join(__dirname, '../public/keys/client-key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, '../public/keys/client-cert.pem'))
+};
+
 const app = express();
+
 const server = http.createServer(app);
+const httpsServer = https.createServer(options,app);
 // const io = socketIO(server);
-const path = require("path");
+
 
 app.use(cors());
 app.use(express.json());
@@ -60,8 +72,16 @@ app.use("/api/v1/board", boardRouter);
 
 
 
+
+
+
 const port = constants.port;
 const host = constants.host;
+
+const httpsPort = constants.httpsPort;
+httpsServer.listen(httpsPort,function(){
+  console.log(`Https server is running on ${httpsPort}`);
+})
 server.listen(port, function () {
   console.log(`Example app listening on ${host}:${port}!`);
 });

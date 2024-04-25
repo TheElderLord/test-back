@@ -13,7 +13,7 @@ const averageWaitHours = require("./averageWaitHours");
 const analytics = async (req, res) => {
   const username = req.user;
   const branch_id = req.params.id;
-  console.log(branch_id);
+  // console.log(branch_id);
   let tickets;
   if(branch_id){
     tickets =  await getTickets(username,branch_id);
@@ -21,7 +21,7 @@ const analytics = async (req, res) => {
   else tickets = await getTickets(username);
 
   
-  console.log(tickets)
+  // console.log(tickets)
   const servTicketsJson = await getServiceTicket(tickets);
   const servTickets = servTicketsJson.data;
   // console.log(servTickets);
