@@ -53,6 +53,7 @@ exports.setBlock = async (req, res) => {
   }
 };
 exports.brtype = async(req,res)=>{
-  const result = await brType();
+  const id = req.params.id;
+  const result = await brType(id);
   res.send(result)
 }
