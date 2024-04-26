@@ -1,31 +1,34 @@
 const { error } = require("console");
 const query = require("../../db/connection");
 
-const getAllTickets = async ( login,branch_id) => {
+const getAllTickets = async (login, branch_id) => {
   // console.log("get tickets", login);
- 
+
   if (login === "admin" || login === "kgd") {
-    let sql;
-    if (branch_id) {
-      const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
-      const childBranches = await query(childSql);
-      // console.log(childBranches);
-      if(childBranches.length !== 0 ){
-        // console.log("here")
-        sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
-          .map((child) => child.F_ID)
-          .join(",")})`;
-      }
-      else {
-        sql  = `Select * from facts where idbranch = ${branch_id} and state <> 'ZOMBIE' and state <> 'MISSED'`
-      }
-     
+    try {
+      let sql;
+      if (branch_id) {
+        const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
+        const childBranches = await query(childSql);
+        console.log(childBranches);
+        if (childBranches.length !== 0) {
+          // console.log("here")
+          sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
+            .map((child) => child.F_ID)
+            .join(",")})`;
+        } else {
+          sql = `Select * from facts where idbranch = ${branch_id} and state <> 'ZOMBIE' and state <> 'MISSED'`;
+        }
+      } else
+        sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
+      // console.log(sql);
+      const tickets = await query(sql);
+      // console.log(tickets)
+      return tickets;
+    } catch (err) {
+      console.log("The error in get tickets first")
+      console.log(err);
     }
-    else sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED'`;
-    // console.log(sql);
-    const tickets = await query(sql);
-    // console.log(tickets)
-    return tickets;
   } else {
     try {
       const user_branches = await query(
@@ -48,10 +51,11 @@ const getAllTickets = async ( login,branch_id) => {
       const sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
       )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT'`;
-     
+
       const tickets = await query(sql);
       return tickets;
     } catch (err) {
+      console.log("The error in get tickets second")
       console.log(err);
     }
   }

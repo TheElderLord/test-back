@@ -47,6 +47,7 @@ const getTicketList = async (login, page, limit, filter, branch_id) => {
         ","
       )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT' `;
     } catch (err) {
+      console.log("The error in ticket list")
       console.log(err);
     }
   }

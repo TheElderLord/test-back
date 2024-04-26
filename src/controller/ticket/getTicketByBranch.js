@@ -4,6 +4,7 @@ const getBranchList = require("../branch/getBranches");
 const getBranchTickets = async (login,branch_id) => {
   try {
     const branches = await getBranchList(login,branch_id);
+    // console.log(branches)
     const branchTicketsArray = {};
 
     await Promise.all(
@@ -56,13 +57,16 @@ const getBranchTickets = async (login,branch_id) => {
             branchTickets[childName] = childTickets;
           })
         );
-
+        try {
+          if(children.length === 0){
+            return
+          }
         const rows = await query(
           `SELECT * FROM facts WHERE idbranch IN (${children
             .map((child) => child.F_ID)
             .join(",")}) and state <> 'ZOMBIE' and state <> 'MISSED'`
         );
-        try {
+      
           rows.forEach((row) => {
             const { state, waitover, servover, rating } = row;
             if (!branchTickets[state]) {

@@ -19,13 +19,14 @@ const getBranchList = async (login,type) => {
       branches.forEach((branch) => {
         branch.children = [];
         branchMap[branch.F_ID] = branch;
-        branch.F_NAME = branch.F_NAME.replace("RU=", "");
+        // branch.F_NAME = branch.F_NAME.replace("RU=", "");
+        // branch.F_NAME = branch.F_NAME.replace(/&quot;/g, "");
       });
 
       // Identify root branches and add child branches accordingly
       branches.forEach((branch) => {
         const parentId = branch.F_PARENT_ID;
-        if (parentId === "101") {
+        if (parentId === "3") {
           // Root branch
           rootBranches.push(branch);
         } else if (branchMap[parentId]) {

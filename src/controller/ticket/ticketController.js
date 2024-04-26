@@ -5,8 +5,8 @@ const getStatesTickets = require("./getTicketByState");
 const getServiceTicket = require("./getServiceTicket");
 const getBranchTickets = require("./getTicketByBranch");
 const getMapInfo = require("./getMapInfo");
-const getList = require('./getTicketList');
-const download = require('./download');
+const getList = require("./getTicketList");
+const download = require("./download");
 
 // const wssSend = async () => {
 //   const login = req.user;
@@ -37,13 +37,12 @@ exports.getTickets = async (req, res) => {
 
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
   let tickets;
-  if(branch_id){
-      tickets =  await alltickets(username,branch_id);
-  }
-  else tickets =  await alltickets(username);
-  
+  if (branch_id) {
+    tickets = await alltickets(username, branch_id);
+  } else tickets = await alltickets(username);
+
   const alarm = await getAlarmTickets(tickets);
-  const rating = await getRatingTicket(username);
+  // const rating = await getRatingTicket(username);
   const states = await getStatesTickets(tickets);
   const service = await getServiceTicket(tickets);
   const branch = await getBranchTickets(username);
@@ -52,11 +51,10 @@ exports.getTickets = async (req, res) => {
     message: "Success",
     count: tickets.length,
     data: {
+      branch,
       alarm: alarm,
       serviceTickets: service,
       states: states,
-      rating: rating,
-      branchTickets: branch,
     },
   };
   res.status(200).json(data);
@@ -65,8 +63,8 @@ exports.branchTickets = async (req, res) => {
   const username = req.user;
   const branch_id = req.params.id;
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
-  const tickets = await alltickets(username,branch_id);
-  const branch = await getBranchTickets(username,branch_id);
+  const tickets = await alltickets(username, branch_id);
+  const branch = await getBranchTickets(username, branch_id);
   // console.log(branch);
   const data = {
     message: "Success",
@@ -81,13 +79,13 @@ exports.getServiceTickets = async (req, res) => {
 
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
   const tickets = await alltickets(username);
-  
+
   const service = await getServiceTicket(tickets);
-  
+
   const data = {
     message: "Success",
     count: tickets.length,
-    data:service,
+    data: service,
   };
   res.status(200).json(data);
 };
@@ -118,7 +116,13 @@ exports.getTicketList = async (req, res) => {
   const limit = parseInt(req.query.limit) || 25; // Number of items per page
   const filter = req.query.filter;
 
-  const {tickets,pagesCount} = await getList(username,page,limit,filter,branch_id);
+  const { tickets, pagesCount } = await getList(
+    username,
+    page,
+    limit,
+    filter,
+    branch_id
+  );
   const data = {
     message: "Success",
     count: tickets.length,
@@ -132,7 +136,7 @@ exports.getTicketList = async (req, res) => {
 exports.getBranchList = async (req, res) => {
   const username = req.user;
   const branch_id = req.params.id;
-  const tickets = await alltickets(username,branch_id);
+  const tickets = await alltickets(username, branch_id);
   const data = {
     message: "Success",
     count: tickets.length,
@@ -143,22 +147,21 @@ exports.getBranchList = async (req, res) => {
   res.status(200).json(data);
 };
 
-
-exports.getMapInfo = async(req,res)=>{
+exports.getMapInfo = async (req, res) => {
   const username = req.user;
   const branch_id = req.params.id;
-  const info = await getMapInfo(username,branch_id);
+  const info = await getMapInfo(username, branch_id);
   const data = {
     message: "Success",
-    
+
     data: info,
   };
   res.status(200).json(data);
-}
+};
 
-exports.downloadTickets = async(req,res)=>{
+exports.downloadTickets = async (req, res) => {
   const buffer = await download();
-  if(buffer){
+  if (buffer) {
     res.set(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -168,8 +171,7 @@ exports.downloadTickets = async(req,res)=>{
     return;
   }
   res.status(500).send("Error downloading Excel");
-  
-}
+};
 // module.exports = { getTickets,  getTicketList };
 
 // exports.getTickets = async (req, res) => {
