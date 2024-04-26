@@ -61,7 +61,8 @@ const getBranchList = async (login,type) => {
       // Identify root branches and add child branches accordingly
       branchesResult.forEach((branch) => {
         const parentId = branch.F_PARENT_ID;
-        if (parentId === "101") {
+        //forte 3 kgd 101
+        if (parentId === "3") {
           // Root branch
           rootBranches.push(branch);
         } else if (branchMap[parentId]) {
