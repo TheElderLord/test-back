@@ -10,7 +10,7 @@ const getAllTickets = async (login, branch_id) => {
       if (branch_id) {
         const childSql = `Select * from branches where F_PARENT_ID = ${branch_id}`;
         const childBranches = await query(childSql);
-        console.log(childBranches);
+        // console.log(childBranches);
         if (childBranches.length !== 0) {
           // console.log("here")
           sql = `SELECT * FROM facts where state <> 'ZOMBIE' and state <> 'MISSED' and idbranch IN (${childBranches
@@ -26,7 +26,7 @@ const getAllTickets = async (login, branch_id) => {
       // console.log(tickets)
       return tickets;
     } catch (err) {
-      console.log("The error in get tickets first")
+      console.log("The error in get tickets first");
       console.log(err);
     }
   } else {
@@ -47,7 +47,7 @@ const getAllTickets = async (login, branch_id) => {
       //     // Handle the case when there are no branches
       //     return [];
       // }
-      // console.log("there")
+      console.log("there")
       const sql = `SELECT * FROM facts WHERE idbranch IN (${branchIds.join(
         ","
       )}) AND state <> 'ZOMBIE' AND state <> 'MISSED' and state <> 'WAIT'`;
@@ -55,7 +55,7 @@ const getAllTickets = async (login, branch_id) => {
       const tickets = await query(sql);
       return tickets;
     } catch (err) {
-      console.log("The error in get tickets second")
+      console.log("The error in get tickets second");
       console.log(err);
     }
   }

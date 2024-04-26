@@ -27,8 +27,12 @@ router.route('/all/:id').get((req, res) => {
 router.get('/branch-tickets',ticketController.branchTickets);
 router.get('/branch-tickets/:id',ticketController.branchTickets);
 
-router.get("/service-tickets",ticketController.getServiceTickets);
 
+// router.get('/service-tickets',ticketController.serviceTickets);
+
+
+router.get("/service-tickets",ticketController.getServiceTickets);
+router.get('/service-tickets/:id',ticketController.getServiceTickets);
 
 // router.route('/:id').get((req, res) => {
 //     getTicketsByBranchId(req, res);

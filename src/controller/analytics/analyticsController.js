@@ -25,18 +25,18 @@ const analytics = async (req, res) => {
   const servTicketsJson = await getServiceTicket(tickets);
   const servTickets = servTicketsJson.data;
   // console.log(servTickets);
-  const averageWaitTime = await getAverageWaitTime(servTickets);
-  const averageServeTime = await getAverageServTime(servTickets);
-  const waitOv = await waitOver(servTickets);
+  // const averageWaitTime = await getAverageWaitTime(servTickets);
+  // const averageServeTime = await getAverageServTime(servTickets);
+  // const waitOv = await waitOver(tickets);
   const peakHours = await getPeakHours(tickets);
   const averageServ = await averageServHours(tickets);
   const averageWait = await averageWaitHours(tickets);
   return res.status(200).json({
     message: "Success",
     data: {
-      averageWaitTime,
-      averageServeTime,
-      waitOv,
+      // averageWaitTime,
+      // averageServeTime,
+      // waitOv,
       peakHours,
       averageServ,
       averageWait,

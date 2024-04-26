@@ -44,17 +44,16 @@ exports.getTickets = async (req, res) => {
   const alarm = await getAlarmTickets(tickets);
   // const rating = await getRatingTicket(username);
   const states = await getStatesTickets(tickets);
-  const service = await getServiceTicket(tickets);
-  const branch = await getBranchTickets(username);
+  // const service = await getServiceTicket(tickets);
+  // const branch = await getBranchTickets(username);
   // console.log(branch);
   const data = {
     message: "Success",
     count: tickets.length,
     data: {
-      branch,
+      // branch,
       alarm: alarm,
-      serviceTickets: service,
-      states: states,
+      // states: states,
     },
   };
   res.status(200).json(data);
@@ -76,9 +75,13 @@ exports.branchTickets = async (req, res) => {
 
 exports.getServiceTickets = async (req, res) => {
   const username = req.user;
-
+  const branch_id = req.params.id;
+  let tickets;
   // console.log("Ticket controller", req.headers.bearer, req.headers.login)
-  const tickets = await alltickets(username);
+   tickets = await alltickets(username);
+   if(branch_id){
+    tickets = await alltickets(username,branch_id);
+   }
 
   const service = await getServiceTicket(tickets);
 

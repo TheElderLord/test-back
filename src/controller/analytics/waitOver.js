@@ -1,5 +1,5 @@
 const waitOver = async (facts) => {
-  // console.log(facts);
+  console.log(facts);
   const resultArray = {};
   let totalWaitOver = 0;
   try {
