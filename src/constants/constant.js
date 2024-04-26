@@ -24,4 +24,6 @@ module.exports = {
     nomad_host : process.env.NOMAD_SERVER_HOST,
     nomad_port : process.env.NOMAD_SERVER_PORT,
 
+    httpsPort:process.env.HTTPS_PORT,
+
 }
