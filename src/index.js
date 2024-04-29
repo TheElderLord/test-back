@@ -28,19 +28,16 @@ const checkTokenMiddleware = require("./middleware/middleware");
 
 // const websock = require("./websocket/webController");
 
-
-
 const options = {
-  key: fs.readFileSync(path.join(__dirname, '../public/keys/client-key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, '../public/keys/client-cert.pem'))
+  key: fs.readFileSync(path.join(__dirname, "../public/keys/client-key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "../public/keys/client-cert.pem")),
 };
 
 const app = express();
 
 const server = http.createServer(app);
-const httpsServer = https.createServer(options,app);
+const httpsServer = https.createServer(options, app);
 // const io = socketIO(server);
-
 
 app.use(cors());
 app.use(express.json());
@@ -60,8 +57,6 @@ app.use("/api/v1/analytics", analyticsRouter);
 app.use("/api/v1/branch-list", branchListRouter);
 app.use("/api/v1/board", boardRouter);
 
-
-
 // (async () => {
 //   // Inside this IIFE, you can use await
 //   await createUser("admin");
@@ -70,18 +65,13 @@ app.use("/api/v1/board", boardRouter);
 
 // websock(io);
 
-
-
-
-
-
 const port = constants.port;
 const host = constants.host;
 
 const httpsPort = constants.httpsPort;
-httpsServer.listen(httpsPort,function(){
+httpsServer.listen(httpsPort, function () {
   console.log(`Https server is running on ${httpsPort}`);
-})
+});
 server.listen(port, function () {
   console.log(`Example app listening on ${host}:${port}!`);
 });

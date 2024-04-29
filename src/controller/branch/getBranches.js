@@ -40,11 +40,11 @@ const getBranchList = async (login,type) => {
       const sqlSelectIdBranch = `SELECT id_branch FROM users WHERE login = '${login}'`;
       const rows = await query(sqlSelectIdBranch);
       const branches = rows[0].id_branch;
-      // console.log("Sql select",branches)
+      console.log("Sql select",branches)
 
       const sql = `SELECT * FROM branches WHERE F_ID IN (${branches})`;
       const branchesResult = await query(sql);
-      // console.log("branchesResult",branchesResult)
+      console.log("branchesResult",branchesResult)
 
       const rootSql = `SELECT * FROM branches WHERE F_ID = ${branchesResult[0].F_PARENT_ID}`;
       const rootBranch = await query(rootSql);

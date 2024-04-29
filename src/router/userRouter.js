@@ -8,21 +8,17 @@ const connection = require('../db/connection')
 
 const router = express.Router();
 
-router.route('/').get((req, res) => {
-    userController.getUsers(req, res);
-});
-router.route('/last').get((req, res) => {
-    userController.getLastUsers(req, res);
-});
+router.route('/').get(userController.getUsers).
+post(userController.createUser);
 
+router.route('/users/last').get(userController.getLastUsers);
 
-
-router.route('/list/:id').get(userController.getUserById).
+router.route('/:id').get(userController.getUser).
 delete(userController.deleteUser)
 .put(userController.updateUser);
 
-router.route('/get-info').get(userController.getUs).
-put(userController.updateUserInfo)
+// router.route('/get-info').get(userController.getUs).
+// put(userController.updateUserInfo)
 
 
 

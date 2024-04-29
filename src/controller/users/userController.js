@@ -1,24 +1,11 @@
-const getUsers = require("./getUsers");
+
 const getLastUsers = require("./getLastUser");
 
-const { deleteUser, updateUser, getUser } = require("./userCRUD");
-
-const updateInfo = require('./updateUserInfo');
-
-
-exports.getUs = async (req, res) => {
-  // const user = req.user;
-  const login = req.user;
-  const user = await getUser(login);
-  res.status(200).json({
-    message: "Success",
-    user,
-  });
-};
+const crud = require("./userCRUD");
 
 exports.getUsers = async (req, res) => {
   const login = req.user;
-  const users = await getUsers(login);
+  const users = await crud.getUsers(login);
   res.status(200).json({
     message: "Success",
     data: {
@@ -26,6 +13,18 @@ exports.getUsers = async (req, res) => {
     },
   });
 };
+
+exports.getUser = async (req, res) => {
+  // const user = req.user;
+  const user_id = req.params.id;
+  const user = await crud.getUserById(user_id);
+  res.status(200).json({
+    message: "Success",
+    user,
+  });
+};
+
+
 exports.getLastUsers = async (req, res) => {
   const login = req.user;
   const users = await getLastUsers(login);
@@ -38,8 +37,8 @@ exports.getLastUsers = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-  const login = req.user;
-  const user = await deleteUser(login);
+  const user_id = req.params.id;
+  const user = await crud.deleteUserById(user_id);
   if (user) {
     res.status(200).json({
       message: "Success",
@@ -55,11 +54,11 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const login = req.user;
+  const id = req.params.id;
   const body = req.body;
-  const user = await updateUser(login, body);
+  const user = await crud.updateUserById(id,body);
   if (user) {
-    res.status(200).json({
+    return res.status(200).json({
       message: "Success",
       data: {
         user,
@@ -75,43 +74,40 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.updateUserInfo = async (req,res) => {
-  const login = req.user;
+exports.createUser = async()=>{
   const body = req.body;
-  const user = await updateInfo(login, body);
-  if (user) {
-    res.status(200).json({
+  const result = await crud.createUserByBranch(body);
+  if(result){
+    return res.status(200).json({
       message: "Success",
       data: {
         user,
       },
     });
-  } else {
-    res.status(404).json({
-      message: "Not found",
-      data: {
-        user,
-      },
-    });
   }
-};
+  return res.status(500).json({
+    message:"Internal Server Error"
+  })
+}
 
-exports.getUserById = async (req, res) => {
-  const login = req.user;
-  const user = await getUserByid(login);
-  if (user) {
-    res.status(200).json({
-      message: "Success",
-      data: {
-        user,
-      },
-    });
-  } else {
-    res.status(404).json({
-      message: "Not found",
-      data: {
-        user,
-      },
-    });
-  }
-};
+// exports.updateUserInfo = async (req,res) => {
+//   const login = req.user;
+//   const body = req.body;
+//   const user = await updateInfo(login, body);
+//   if (user) {
+//     res.status(200).json({
+//       message: "Success",
+//       data: {
+//         user,
+//       },
+//     });
+//   } else {
+//     res.status(404).json({
+//       message: "Not found",
+//       data: {
+//         user,
+//       },
+//     });
+//   }
+// };
+
