@@ -74,15 +74,13 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.createUser = async()=>{
+exports.createUser = async(req,res)=>{
   const body = req.body;
-  const result = await crud.createUserByBranch(body);
+  const result = await crud.createUser(body);
   if(result){
     return res.status(200).json({
       message: "Success",
-      data: {
-        user,
-      },
+     
     });
   }
   return res.status(500).json({

@@ -1,5 +1,6 @@
 const query = require("../../db/connection");
 const getbranches = require("../branch/getBranches");
+const { format } = require('date-fns');
 
 exports.getUsers = async (login) => {
   try {
@@ -24,13 +25,12 @@ exports.getUsers = async (login) => {
 };
 
 exports.getUserById = async (id) => {
-  try{
+  try {
     const user = await query("Select * FROM users WHERE id = ?", [id]);
     return user;
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
-
 };
 
 exports.deleteUserById = async (id) => {
@@ -62,25 +62,25 @@ exports.updateUserById = async (id, body) => {
   }
 };
 
-exports.createUser = async ( body) => {
+exports.createUser = async (body) => {
   const { username, password, id_branch } = body;
- 
-    try {
-      const sql =
-        "Insert into users(login,password,id_branch,ins_date) values(?,?,?,?)";
-      await query(
-        sql,
-        username,
-        password,
-        id_branch,
-        new Date().toLocaleDateString("ru-RU")
-      );
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false
-    }
-   
+  const createdData = new Date();
+  // console.log(createdData);
+  const formattedDate = format(createdData, 'yyyy-MM-dd HH:mm:ss');
+  try {
+    const sql =
+      "Insert into users(login,password,id_branch,ins_date) values(?,?,?,?)";
+    await query(sql, [
+      username,
+      password,
+      id_branch,
+      formattedDate
+    ]);
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 
   console.log(insSql);
 };
