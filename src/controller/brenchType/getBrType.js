@@ -17,35 +17,51 @@ const brType = async (id) => {
     data.forEach((entry) => {
       const { F_BRANCH_ID, F_START_WORK_TIME, F_STOP_WORK_TIME, F_NAME } =
         entry;
-      if (F_BRANCH_ID === null || F_START_WORK_TIME === null || new Date(F_START_WORK_TIME) < today) {
-        return;
-      }
 
-      if (!branchMap[F_BRANCH_ID] ) {
+      if (!branchMap[F_BRANCH_ID]) {
         branchMap[F_BRANCH_ID] = [];
       }
-
+      console.log(F_BRANCH_ID);
+      const today = new Date();
       let start = new Date(F_START_WORK_TIME);
-      // let end = F_STOP_WORK_TIME !== null ? new Date(F_STOP_WORK_TIME) : new Date();
-      let end = F_STOP_WORK_TIME === null ? new Date() : new Date(F_STOP_WORK_TIME)  ;
-      // If start time is earlier than today, set it to today at 9 am
-      if (start < today) {
-        start = today;
+      let end;
+      console.log(start)
+      if (
+        start.getFullYear() === today.getFullYear() &&
+        start.getMonth() === today.getMonth() &&
+        start.getDate() === today.getDate()
+      ) {
+        start = start.getHours() + ":" + start.getMinutes();
+        end = F_STOP_WORK_TIME ? new Date(F_STOP_WORK_TIME) : new Date();
+        end = end.getHours() + ":" + end.getMinutes();
+        branchMap[F_BRANCH_ID].push({ start, end, menutype: F_NAME });
+      }
+      if (!F_STOP_WORK_TIME) {
+        if (
+          start.getFullYear() < today.getFullYear() &&
+          start.getMonth() < today.getMonth() &&
+          start.getDate() < today.getDate()
+        ) {
+          start = "09:00";
+        }
+        start = start.getHours() + ":" + start.getMinutes();
+        end = F_STOP_WORK_TIME ? new Date(F_STOP_WORK_TIME) : new Date();
+        end = end.getHours() + ":" + end.getMinutes();
+        branchMap[F_BRANCH_ID].push({ start, end, menutype: F_NAME });
       }
 
-      
+      // If start time is today, set it to today at 9 am
 
-      branchMap[F_BRANCH_ID].push({start,end,menutype:F_NAME});
-    
-    
-      return branchMap;
-
-      // Store the timeline for the branch if it doesn't exist or if it's fresher than the existing one
-     
+      // If end time is null or if start is today, set end time to current time
     });
 
-    // Convert the branchMap to the desired format
-    
+    // Log and return branchMap
+    const result = {};
+    for (const branchId in branchMap) {
+      result[`branchId: ${branchId}`] = branchMap[branchId];
+    }
+
+    return result;
   } catch (err) {
     console.log(err);
   }
