@@ -21,38 +21,16 @@ const brType = async (id) => {
       if (!branchMap[F_BRANCH_ID]) {
         branchMap[F_BRANCH_ID] = [];
       }
-      console.log(F_BRANCH_ID);
-      const today = new Date();
-      let start = new Date(F_START_WORK_TIME);
-      let end;
-      console.log(start)
-      if (
-        start.getFullYear() === today.getFullYear() &&
-        start.getMonth() === today.getMonth() &&
-        start.getDate() === today.getDate()
-      ) {
-        start = start.getHours() + ":" + start.getMinutes();
-        end = F_STOP_WORK_TIME ? new Date(F_STOP_WORK_TIME) : new Date();
-        end = end.getHours() + ":" + end.getMinutes();
-        branchMap[F_BRANCH_ID].push({ start, end, menutype: F_NAME });
-      }
-      if (!F_STOP_WORK_TIME) {
-        if (
-          start.getFullYear() < today.getFullYear() &&
-          start.getMonth() < today.getMonth() &&
-          start.getDate() < today.getDate()
-        ) {
-          start = "09:00";
-        }
-        start = start.getHours() + ":" + start.getMinutes();
-        end = F_STOP_WORK_TIME ? new Date(F_STOP_WORK_TIME) : new Date();
-        end = end.getHours() + ":" + end.getMinutes();
-        branchMap[F_BRANCH_ID].push({ start, end, menutype: F_NAME });
-      }
 
-      // If start time is today, set it to today at 9 am
+      const start = new Date(F_START_WORK_TIME);
+      let end = F_STOP_WORK_TIME ? new Date(F_STOP_WORK_TIME) : new Date();
 
-      // If end time is null or if start is today, set end time to current time
+      // Format start and end times
+      const formattedStart = formatTime(start);
+      const formattedEnd = formatTime(end);
+
+      // Push formatted data to branchMap
+      branchMap[F_BRANCH_ID].push({ start: formattedStart, end: formattedEnd, menutype: F_NAME });
     });
 
     // Log and return branchMap
@@ -65,6 +43,13 @@ const brType = async (id) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+// Function to format time with leading zero for minutes less than 10
+const formatTime = (time) => {
+  const hours = time.getHours();
+  const minutes = time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes();
+  return hours + ":" + minutes;
 };
 
 module.exports = brType;
