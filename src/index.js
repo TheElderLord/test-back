@@ -3,6 +3,7 @@ const cors = require("cors");
 const http = require("http");
 const socketIO = require("socket.io");
 
+
 // const WebSocket = require('ws');
 
 // const wss = new WebSocket.Server({ port: 8080 });
@@ -26,7 +27,7 @@ const checkTokenMiddleware = require("./middleware/middleware");
 // const websock = require("./websocket/webController");
 
 const app = express();
-const server = http.createServer(app);
+// const server = http.createServer(app);
 // const io = socketIO(server);
 const path = require("path");
 
@@ -35,18 +36,26 @@ app.use(express.json());
 app.use("/api/v1/auth", authRouter);
 
 app.use("/images", express.static(path.join("images")));
-app.use(checkTokenMiddleware);
-app.use("/api/v1/tickets", router);
-app.use("/api/v1/branches", branchRouter);
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/messages", messageRouter);
-app.use("/api/v1/employees", employeeRouter);
-app.use("/api/v1/services", serviceRouter);
-app.use("/api/v1/windows", windowRouter);
-app.use("/api/v1/roles", roleRouter);
-app.use("/api/v1/analytics", analyticsRouter);
-app.use("/api/v1/branch-list", branchListRouter);
-app.use("/api/v1/board", boardRouter);
+
+// app.use(checkTokenMiddleware);
+app.use("/api/v1/tickets",checkTokenMiddleware, router);
+app.use("/api/v1/branches",checkTokenMiddleware, branchRouter);
+app.use("/api/v1/users",checkTokenMiddleware, userRouter);
+app.use("/api/v1/messages",checkTokenMiddleware, messageRouter);
+app.use("/api/v1/employees",checkTokenMiddleware, employeeRouter);
+app.use("/api/v1/services",checkTokenMiddleware, serviceRouter);
+app.use("/api/v1/windows",checkTokenMiddleware, windowRouter);
+app.use("/api/v1/roles",checkTokenMiddleware, roleRouter);
+app.use("/api/v1/analytics",checkTokenMiddleware, analyticsRouter);
+app.use("/api/v1/branch-list",checkTokenMiddleware, branchListRouter);
+app.use("/api/v1/board",checkTokenMiddleware, boardRouter);
+
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Handle SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 const createUser = require("./controller/users/createUser");
 const truncation = require("./db/truncation");
@@ -84,8 +93,9 @@ function startMainAtCustomTime() {
 
 startMainAtCustomTime();
 
-const port = constants.port;
-const host = constants.host;
-server.listen(port, function () {
-  console.log(`Example app listening on ${host}:${port}!`);
-});
+// const port = constants.port;
+// const host = constants.host;
+// server.listen(port, function () {
+//   console.log(`Example app listening on ${host}:${port}!`);
+// });
+module.exports = app;

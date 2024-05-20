@@ -21,7 +21,7 @@ const analytics = async (req, res) => {
   else tickets = await getTickets(username);
 
   
-  console.log(tickets)
+  // console.log(tickets)
   const servTicketsJson = await getServiceTicket(tickets);
   const servTickets = servTicketsJson.data;
   // console.log(servTickets);
