@@ -50,7 +50,7 @@ app.use("/api/v1/analytics",checkTokenMiddleware, analyticsRouter);
 app.use("/api/v1/branch-list",checkTokenMiddleware, branchListRouter);
 app.use("/api/v1/board",checkTokenMiddleware, boardRouter);
 
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join("dist")));
 
 // Handle SPA
 app.get('*', (req, res) => {
