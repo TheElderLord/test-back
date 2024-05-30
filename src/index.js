@@ -64,6 +64,12 @@ app.use("/api/v1/board", boardRouter);
 // })();
 
 // websock(io);
+app.use(express.static(path.join("dist")));
+
+// Handle SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 const port = constants.port;
 const host = constants.host;
