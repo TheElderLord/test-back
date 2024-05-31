@@ -2,13 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const https = require("https");
-const socketIO = require("socket.io");
 const fs = require("fs");
 const path = require("path");
 const history = require('connect-history-api-fallback');
-// const WebSocket = require('ws');
-
-// const wss = new WebSocket.Server({ port: 8080 });
 
 const constants = require("./constants/constant");
 const { router } = require("./router/ticketRouter");
@@ -26,8 +22,6 @@ const boardRouter = require("./router/boardRouter");
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
-// const websock = require("./websocket/webController");
-
 const options = {
   key: fs.readFileSync(path.join(__dirname, "../public/keys/server.key")),
   cert: fs.readFileSync(path.join(__dirname, "../public/keys/server.crt")),
@@ -37,22 +31,17 @@ const app = express();
 
 const server = http.createServer(app);
 const httpsServer = https.createServer(options, app);
-// const io = socketIO(server);
 
+// Middleware
 app.use(cors());
 app.use(express.json());
-// app.use(history());
 
+// Serve static files
+app.use(express.static("dist"));
+app.use('/images', express.static("images"));
 
-app.use(express.static(path.join(__dirname, '../dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
-});
-
-
+// API routes
 app.use("/api/v1/auth", authRouter);
-
-app.use("/images", express.static(path.join("images")));
 app.use(checkTokenMiddleware);
 app.use("/api/v1/tickets", router);
 app.use("/api/v1/branches", branchRouter);
@@ -66,26 +55,25 @@ app.use("/api/v1/analytics", analyticsRouter);
 app.use("/api/v1/branch-list", branchListRouter);
 app.use("/api/v1/board", boardRouter);
 
-// (async () => {
-//   // Inside this IIFE, you can use await
-//   await createUser("admin");
-
-// })();
-
-// websock(io);
-// app.use(express.static(path.join("dist")));
-
-// Handle SPA
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
+// Token middleware
 
 
+// History API Fallback for SPA
+app.use(history({
+  rewrites: [
+    { from: /^\/api\/.*$/, to: function(context) { return context.parsedUrl.pathname; } }
+  ]
+}));
+
+// Handle SPA fallback after static and API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+});
 
 const port = constants.port;
 const host = constants.host;
-
 const httpsPort = constants.httpsPort;
+
 httpsServer.listen(httpsPort, function () {
   console.log(`Https server is running on ${host}:${httpsPort}`);
 });
