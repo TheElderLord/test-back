@@ -10,9 +10,9 @@ const checkTokenMiddleware = (req, res, next) => {
     const token = req.headers.bearer;
     // console.log(req.path)
     // console.log(req.headers.bearer);
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: Token is missing' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ message: 'Unauthorized: Token is missing' });
+    // }
 
     jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {

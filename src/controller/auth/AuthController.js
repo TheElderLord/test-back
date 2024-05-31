@@ -1,7 +1,7 @@
 const query = require("../../db/connection");
 const { secret } = require("../../constants/constant");
 
-const nomadDb = require("../../db/nomadConnection");
+// const nomadDb = require("../../db/nomadConnection");
 
 const moment = require("moment");
 
@@ -57,51 +57,51 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.nomadLogin = async (req, res) => {
-  const { username, password } = req.body;
+// exports.nomadLogin = async (req, res) => {
+//   const { username, password } = req.body;
 
-  try {
-    const user = await nomadDb(
-      "SELECT * FROM t_g_user WHERE F_LOGIN = ? AND F_PASSWORD = ?",
-      [username, password]
-    );
+//   try {
+//     const user = await nomadDb(
+//       "SELECT * FROM t_g_user WHERE F_LOGIN = ? AND F_PASSWORD = ?",
+//       [username, password]
+//     );
 
-    if (user && user.length > 0) {
-      console.log(user)
-      const inSc = await query(
-        "SELECT * FROM users WHERE login = ? AND password = ?",
-        [username, password]
-      );
-      console.log(inSc)
-      if(inSc.length === 0){
-        const sql = `Insert into users(login,password,role,id_branch) 
-        values(${user[0].F_LOGIN},${user[0].F_PASSWORD},3,${user[0].F_LOGIN.substring(0,4)})`;
-        await query(sql);
+//     if (user && user.length > 0) {
+//       console.log(user)
+//       const inSc = await query(
+//         "SELECT * FROM users WHERE login = ? AND password = ?",
+//         [username, password]
+//       );
+//       console.log(inSc)
+//       if(inSc.length === 0){
+//         const sql = `Insert into users(login,password,role,id_branch) 
+//         values(${user[0].F_LOGIN},${user[0].F_PASSWORD},3,${user[0].F_LOGIN.substring(0,4)})`;
+//         await query(sql);
        
-      }
+//       }
      
-      const token = jwt.sign(
-        {
-          userId: user[0].F_ID,
-          username: user[0].F_LOGIN,
-          branch: username.substring(0, 4),
-        },
-        secretKey,
-        { expiresIn: "24h" }
-      );
+//       const token = jwt.sign(
+//         {
+//           userId: user[0].F_ID,
+//           username: user[0].F_LOGIN,
+//           branch: username.substring(0, 4),
+//         },
+//         secretKey,
+//         { expiresIn: "24h" }
+//       );
 
-      res.json({
-        message: "Authentication successful!",
-        token,
-        // login:user[0].login,
-      });
-    } else {
-      res.status(401).json({ message: "Invalid credentials" });
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
+//       res.json({
+//         message: "Authentication successful!",
+//         token,
+//         // login:user[0].login,
+//       });
+//     } else {
+//       res.status(401).json({ message: "Invalid credentials" });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 exports.logout = async (req, res) => {
   const token = req.headers.bearer;

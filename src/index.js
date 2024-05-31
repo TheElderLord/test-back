@@ -5,7 +5,7 @@ const https = require("https");
 const socketIO = require("socket.io");
 const fs = require("fs");
 const path = require("path");
-
+const history = require('connect-history-api-fallback');
 // const WebSocket = require('ws');
 
 // const wss = new WebSocket.Server({ port: 8080 });
@@ -29,8 +29,8 @@ const checkTokenMiddleware = require("./middleware/middleware");
 // const websock = require("./websocket/webController");
 
 const options = {
-  key: fs.readFileSync(path.join(__dirname, "../public/keys/client-key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "../public/keys/client-cert.pem")),
+  key: fs.readFileSync(path.join(__dirname, "../public/keys/server.key")),
+  cert: fs.readFileSync(path.join(__dirname, "../public/keys/server.crt")),
 };
 
 const app = express();
@@ -41,6 +41,15 @@ const httpsServer = https.createServer(options, app);
 
 app.use(cors());
 app.use(express.json());
+// app.use(history());
+
+
+app.use(express.static(path.join(__dirname, '../dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+});
+
+
 app.use("/api/v1/auth", authRouter);
 
 app.use("/images", express.static(path.join("images")));
@@ -64,19 +73,21 @@ app.use("/api/v1/board", boardRouter);
 // })();
 
 // websock(io);
-app.use(express.static(path.join("dist")));
+// app.use(express.static(path.join("dist")));
 
 // Handle SPA
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
+
+
 
 const port = constants.port;
 const host = constants.host;
 
 const httpsPort = constants.httpsPort;
 httpsServer.listen(httpsPort, function () {
-  console.log(`Https server is running on ${httpsPort}`);
+  console.log(`Https server is running on ${host}:${httpsPort}`);
 });
 server.listen(port, function () {
   console.log(`Example app listening on ${host}:${port}!`);
