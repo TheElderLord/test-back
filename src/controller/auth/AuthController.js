@@ -8,6 +8,7 @@ const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const express = require("express");
+const bcrypt = require('bcrypt');
 
 const app = express();
 const secretKey = secret; // Replace with your actual secret key
@@ -20,11 +21,18 @@ exports.login = async (req, res) => {
   // Check if the user exists
   try {
     const user = await query(
-      "SELECT * FROM users WHERE login = ? AND password = ?",
-      [username, password]
+      "SELECT * FROM users WHERE login = ?",
+      [username]
     );
-
+    console.log(user)
     if (user && user.length > 0) {
+      const hashedpassword = user[0].password;
+      console.log(hashedpassword)
+      const match = await bcrypt.compare(password,hashedpassword);
+      console.log(match)
+      if(!match){
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
       const sql = `UPDATE users SET sign_in_date = '${moment().format(
         "YYYY-DD-MM HH:mm:ss"
       )}' WHERE id = ${user[0].id}`;

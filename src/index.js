@@ -37,7 +37,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 app.use('/images', express.static("images"));
 
 // API routes
@@ -59,16 +59,16 @@ app.use("/api/v1/board", boardRouter);
 
 
 // History API Fallback for SPA
-app.use(history({
-  rewrites: [
-    { from: /^\/api\/.*$/, to: function(context) { return context.parsedUrl.pathname; } }
-  ]
-}));
+// app.use(history({
+//   rewrites: [
+//     { from: /^\/api\/.*$/, to: function(context) { return context.parsedUrl.pathname; } }
+//   ]
+// }));
 
-// Handle SPA fallback after static and API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
-});
+// // Handle SPA fallback after static and API routes
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+// });
 
 const port = constants.port;
 const host = constants.host;
