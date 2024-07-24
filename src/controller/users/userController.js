@@ -98,7 +98,7 @@ exports.updateUserInfo = async (req,res) => {
 
 exports.getUserById = async (req, res) => {
   const login = req.user;
-  const user = await getUserByid(login);
+  const user = await getUser(login);
   if (user) {
     res.status(200).json({
       message: "Success",

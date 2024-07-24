@@ -16,6 +16,6 @@ const server = http.createServer(app);
 // Corrected: Function declaration moved above its usage
  // Corrected: Calling the function after it's declared
 
-app.listen(port, function () {
+server.listen(port, function () {
   console.log(`Example app listening on ${host}:${port}!`);
 });
