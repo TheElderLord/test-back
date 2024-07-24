@@ -9,8 +9,8 @@ const getBranchList = async (login,type) => {
     if (login === "admin" || login === "kgd") {
       let sql = `SELECT * FROM branches`;
       if(type){
-        if(type === "online") sql = `SELECT * FROM branches where ONN = 1 OR F_PARENT_ID = 101`;
-        else if(type === "offline") sql =`SELECT * FROM branches where ONN=0 OR F_PARENT_ID = 101`;
+        if(type === "online") sql = `SELECT * FROM branches where ONN = 1 OR F_PARENT_ID IS NULL`;
+        else if(type === "offline") sql =`SELECT * FROM branches where ONN=0 OR F_PARENT_ID IS NULL`;
       }
       // console.log(sql);
       const branches = await query(sql);
@@ -25,7 +25,7 @@ const getBranchList = async (login,type) => {
       // Identify root branches and add child branches accordingly
       branches.forEach((branch) => {
         const parentId = branch.F_PARENT_ID;
-        if (parentId === "101") {
+        if (parentId == "null") {
           // Root branch
           rootBranches.push(branch);
         } else if (branchMap[parentId]) {
@@ -61,7 +61,7 @@ const getBranchList = async (login,type) => {
       // Identify root branches and add child branches accordingly
       branchesResult.forEach((branch) => {
         const parentId = branch.F_PARENT_ID;
-        if (parentId === "101") {
+        if (parentId === "null") {
           // Root branch
           rootBranches.push(branch);
         } else if (branchMap[parentId]) {

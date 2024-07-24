@@ -20,7 +20,7 @@ const getBranchList = async (login) => {
         // Identify root branches and add child branches accordingly
         branches.forEach((branch) => {
           const parentId = branch.F_PARENT_ID;
-          if (parentId === "101") {
+          if (parentId === "null") {
             // Root branch
             rootBranches.push(branch);
           } else if (branchMap[parentId]) {
@@ -53,7 +53,7 @@ const getBranchList = async (login) => {
         // Identify root branches and add child branches accordingly
         userBranches.forEach((branch) => {
           const parentId = branch.F_PARENT_ID;
-          if (parentId === "101") {
+          if (parentId === "null") {
             // Root branch
             rootBranches.push(branch);
           } else if (branchMap[parentId]) {
