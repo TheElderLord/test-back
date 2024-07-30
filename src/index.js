@@ -22,15 +22,11 @@ const boardRouter = require("./router/boardRouter");
 
 const checkTokenMiddleware = require("./middleware/middleware");
 
-const options = {
-  key: fs.readFileSync(path.join(__dirname, "../public/keys/server.key")),
-  cert: fs.readFileSync(path.join(__dirname, "../public/keys/server.crt")),
-};
 
 const app = express();
 
 const server = http.createServer(app);
-const httpsServer = https.createServer(options, app);
+
 
 // Middleware
 app.use(cors());
@@ -74,9 +70,7 @@ const port = constants.port;
 const host = constants.host;
 const httpsPort = constants.httpsPort;
 
-httpsServer.listen(httpsPort, function () {
-  console.log(`Https server is running on ${host}:${httpsPort}`);
-});
+
 server.listen(port, function () {
   console.log(`Example app listening on ${host}:${port}!`);
 });
