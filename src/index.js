@@ -1,10 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const https = require("https");
-const fs = require("fs");
-const path = require("path");
-const history = require('connect-history-api-fallback');
 
 const constants = require("./constants/constant");
 const { router } = require("./router/ticketRouter");
